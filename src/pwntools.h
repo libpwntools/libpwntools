@@ -124,14 +124,14 @@ namespace pack {
   std::string flat(std::vector<uint64_t> chain) {
     std::string s;
     for(int i=0; i<chain.size(); ++i)
-        s += p64(chain[i]);
+        s += pack::p64(chain[i]);
     return s;
   }
 
-  std::string flat(std::vector<uint64_t> chain) {
+  std::string flat(std::vector<uint32_t> chain) {
     std::string s;
     for(int i=0; i<chain.size(); ++i)
-        s += p64(chain[i]);
+        s += pack::p32(chain[i]);
     return s;
   }
 };
