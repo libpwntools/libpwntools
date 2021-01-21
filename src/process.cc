@@ -9,6 +9,7 @@
 #include <sys/prctl.h>
 #include <thread>
 #include "pwntools.h"
+#include "remote.h"
 
 bool ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
@@ -103,7 +104,6 @@ void Process::interactive() {
 }
 
 /* Example
-*/
   int main(void) {
       Process io("/bin/cat");
       io.sendline("Pepega" + pack::p64(0x4141));
@@ -111,5 +111,12 @@ void Process::interactive() {
       io.gdb_attach();
       io.interactive();
   }
-/*
 */
+
+int main(void) {
+ Remote io("localhost",8888);
+ std::cout << io.recvn(0x2);
+ io.Send("%p%p%p%p\n");
+ std::string S = io.recvline();
+ std::cout << S ;
+}

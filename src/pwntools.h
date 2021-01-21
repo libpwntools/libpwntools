@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <list>
 #include <cassert>
-
+#include "Socket.h"
 #define AMD64 64
 #define I386 86
 
@@ -44,17 +44,5 @@ namespace pack {
     for(int i=0; i<chain.size(); ++i)
         s += pack::p32(chain[i]);
     return s;
-  }
-};
-
-class Remote {
-
- public:
-  const char* host_ip;
-  uint32_t port;
-
-  Remote(const char* ip,uint32_t p) {
-   this->host_ip = ip;
-   this->port = p;
   }
 };
