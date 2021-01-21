@@ -20,6 +20,7 @@ struct packed_32 {
 }__attribute__((packed));
 
 class Char {
+
  public:
   char *bytes;
   uint64_t len;
@@ -32,7 +33,15 @@ class Char {
      exit(-1);
    }
   }
+
+  Char(const char * c) {
+   this->len = strlen(c);
+   this->bytes = new char[this->len + 1];
+   for(int i = 0; i < this->len; i++ ) { this->bytes[i] =  c[i] ; }
+  }
+
   ~Char() { delete this->bytes; }
+
   char* raw() { return this->bytes; }
 
   char at(uint32_t index) {
@@ -52,11 +61,11 @@ class Char {
    }
    uint64_t new_size = size + this->len;
    char* temp_bytes = new char[new_size + 1];
-   for(int i = 0; i < this->len; i++) {temp_bytes[i] = this->bytes[i]; }
+   for(int i = 0; i < this->len; i++) { temp_bytes[i] = this->bytes[i]; }
    for(int i = this->len ; i < size; i++) { temp_bytes[i] = fillcharacter; }
    delete this->bytes;
    this->len = new_size;
-   this->bytes = temp_bytes; 
+   this->bytes = temp_bytes;
   }
 
   Char* sustitute(uint32_t s, uint32_t t) {
@@ -66,20 +75,25 @@ class Char {
    }
    uint64_t required_len = t - s;
    Char* c = new Char(required_len);
-   for(int i = t, k = 0 ; i < s; i ++ ) { c[k++] = this->bytes[i]; }
+   for(int i = s, k = 0 ; i < t; i ++ ) { c->bytes[k++] = this->bytes[i]; }
    return c;
   }
 
+  void reverse() {
+   Char* tmp = new Char(this->len);
+   for(int i = (this->len - 1),k = 0; i >= 0; i--) { tmp->bytes[k++] = this->bytes[i]; }
+   delete this->bytes;
+   this->bytes = tmp->bytes;
+  }
 };
 
 class General {
  public:
   Char* Add(std::vector<Char*> arguments) {
    uint64_t total_size_required {0};
-   int i,k;
-   for(i = 0; i < arguments.size(); i++) { total_size_required += arguments.at(i)->len; }
+   for(int i = 0; i < arguments.size(); i++) { total_size_required += arguments.at(i)->len; }
    Char* c = new Char(total_size_required);
-   for(i = 0,k = 0; i < arguments.size(); i++ ) {
+   for(int i = 0,k = 0; i < arguments.size(); i++ ) {
     for (int j = 0; j < arguments.at(i)->len; j++ ) { c->bytes[k++] = arguments.at(i)->bytes[j]; }
    }
    return c;
@@ -87,7 +101,7 @@ class General {
 };
 
 class Struct {
- public: 
+ public:
   /* Pack 64 bit number to bytes */
   packed_64 pack64(int64_t number) {
    packed_64 packed_bytes;
@@ -107,7 +121,7 @@ class Struct {
    return packed_bytes;
   }
   /* Unpack bytes to 64 bit number */
-  int64_t unpack64(packed_64 packed_bytes) { 
+  int64_t unpack64(packed_64 packed_bytes) {
    int64_t unpacked_number {0};
    for(int i = 1; i < 9 ; i++) {
     unpacked_number += ( ( (int64_t)packed_bytes.bytes[i - 1] ) << ( 64 - (8 * i) ) );
@@ -153,6 +167,4 @@ class Remote {
    this->host_ip = ip;
    this->port = p;
   }
-
-
 };
