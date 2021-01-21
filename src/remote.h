@@ -11,7 +11,13 @@ class Remote {
 
  public:
   Remote(const std::string&, uint32_t);
-  std::string recvn(uint32_t n);
+  std::string recvn(size_t);
   std::string recvline();
-  void Send(const std::string&);
+  std::string recvuntil(const std::string&);
+  size_t send(const std::string&);
+  void recvloop();
+  size_t sendafter(const std::string&,const std::string&);
+  size_t sendlineafter(const std::string&,const std::string&);
+  void interactive();
+  size_t sendline(const std::string&);
 };

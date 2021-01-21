@@ -1,20 +1,15 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <stdint.h>
-#include "process.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/prctl.h>
 #include <thread>
-#include "pwntools.h"
+#include "process.h"
 #include "remote.h"
-
-bool ends_with(const std::string& a, const std::string& b) {
-    if (b.size() > a.size()) return false;
-    return std::equal(a.begin() + a.size() - b.size(), a.end(), b.begin());
-}
+#include "utils.h"
 
 Process::Process() {}
 Process::Process(const std::string &path) {
@@ -116,7 +111,7 @@ void Process::interactive() {
 int main(void) {
  Remote io("localhost",8888);
  std::cout << io.recvn(0x2);
- io.Send("%p%p%p%p\n");
+ io.send("%p%p%p%p\n");
  std::string S = io.recvline();
  std::cout << S ;
 }

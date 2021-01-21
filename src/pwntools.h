@@ -1,4 +1,6 @@
 #pragma once
+#ifndef PWNTOOLS_H
+#define PWNTOOLS_H
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,7 +11,6 @@
 #include <cstddef>
 #include <list>
 #include <cassert>
-#include "Socket.h"
 #define AMD64 64
 #define I386 86
 
@@ -46,3 +47,5 @@ namespace pack {
     return s;
   }
 };
+
+#endif
