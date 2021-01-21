@@ -19,17 +19,17 @@ Process::Process(const std::string &path) {
 
     this->pid = fork();
     if(!this->pid) {
-		dup2(outpipefd[0], 0);
-		dup2(inpipefd[1], 1);
-		dup2(inpipefd[1], 2);
+        dup2(outpipefd[0], 0);
+        dup2(inpipefd[1], 1);
+        dup2(inpipefd[1], 2);
 
         std::vector<char*> av;
-		prctl(PR_SET_PDEATHSIG, SIGTERM);
+        prctl(PR_SET_PDEATHSIG, SIGTERM);
         av.push_back((char *)path.c_str());
         av.push_back(NULL);
 
-		execv(path.c_str(), &av[0]);
-		exit(0);
+        execv(path.c_str(), &av[0]);
+        exit(0);
     }
 
     close(inpipefd[1]);
