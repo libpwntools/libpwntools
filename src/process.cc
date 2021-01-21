@@ -8,7 +8,6 @@
 #include <sys/prctl.h>
 #include <thread>
 #include "process.h"
-#include "remote.h"
 #include "utils.h"
 
 Process::Process() {}
@@ -96,22 +95,4 @@ void Process::interactive() {
         this->sendline(inp);
         usleep(5000);
     }
-}
-
-/* Example
-  int main(void) {
-      Process io("/bin/cat");
-      io.sendline("Pepega" + pack::p64(0x4141));
-      std::cout << io.recv(1024);
-      io.gdb_attach();
-      io.interactive();
-  }
-*/
-
-int main(void) {
- Remote io("localhost",8888);
- std::cout << io.recv(0x2);
- io.send("%p%p%p%p\n");
- std::string S = io.recvline();
- std::cout << S ;
 }
