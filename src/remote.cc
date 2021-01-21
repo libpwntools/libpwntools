@@ -81,7 +81,7 @@ void Remote::interactive() {
     std::string inp;
     while(true) {
         std::cout << "$ ";
-        std::cin >> inp;
+        getline(std::cin ,inp);
         this->sendline(inp);
         usleep(5000);
     }
