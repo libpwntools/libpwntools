@@ -7,6 +7,10 @@ size_t send_wrapper(int fd, const char * buf, size_t len, int z) {
     return send(fd, buf, len, z);
 }
 
+size_t recv_wrapper(int fd, char * buf, size_t len, int z) {
+    return recv(fd, buf, len, z);
+}
+
 Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
     this->port = std::to_string(port_number);
@@ -21,9 +25,9 @@ Remote::Remote(const std::string &ip, uint32_t port_number) {
     reads.push_back(*this->sock);
 }
 
-std::string Remote::recvn(size_t len) {
+std::string Remote::recv(size_t len) {
 	char * buf = (char *)malloc(len);
-	len = recv(sock->sock, buf, len, 0);
+	len = recv_wrapper(sock->sock, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
 	return s;
@@ -33,7 +37,7 @@ std::string Remote::recvn(size_t len) {
 void Remote::recvloop() {
     std::string s;
     while(true) {
-        s = this->recvn(1024);
+        s = this->recv(1024);
         write(1, s.c_str(), s.length());
         s.clear();
     }
@@ -42,7 +46,7 @@ void Remote::recvloop() {
 std::string Remote::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
-        s += this->recvn(1);
+        s += this->recv(1);
     return s;
 }
 
