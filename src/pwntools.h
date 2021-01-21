@@ -49,3 +49,6 @@ namespace pack {
 };
 
 #endif
+#include "process.h"
+#include "remote.h"
+#include "utils.h"

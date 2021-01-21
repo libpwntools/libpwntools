@@ -1,8 +1,5 @@
 #include <string>
 #include <iostream>
-#include "process.h"
-#include "remote.h"
-#include "utils.h"
 #include "pwntools.h"
 
 int main(void) {
