@@ -11,6 +11,7 @@ class Process {
         size_t sendline(const std::string&);
         std::string recvuntil(const std::string&);
         std::string recvline();
+        void gdb_attach();
     private:
         int pid;
         int _stdin;

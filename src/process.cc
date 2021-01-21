@@ -44,6 +44,12 @@ Process::Process(const std::string &path) {
     this->_stdout = inpipefd[0];
 }
 
+void Process::gdb_attach() {
+    std::string _pid = std::to_string(this->pid);
+    std::string cmd = "gnome-terminal -- gdb --pid="+_pid;
+    system(cmd.c_str());
+}
+
 std::string Process::recv(size_t len) {
     char * buf = (char *)malloc(len);
     len = read(this->_stdout, buf, len);
@@ -97,12 +103,13 @@ void Process::interactive() {
 }
 
 /* Example
-
+*/
   int main(void) {
       Process io("/bin/cat");
       io.sendline("Pepega" + pack::p64(0x4141));
       std::cout << io.recv(1024);
+      io.gdb_attach();
       io.interactive();
   }
-
+/*
 */
