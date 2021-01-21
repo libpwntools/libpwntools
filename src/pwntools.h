@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,6 +8,7 @@
 #include <stdio.h>
 #include <cstddef>
 #include <list>
+#include <cassert>
 
 #define AMD64 64
 #define I386 86
@@ -100,60 +102,37 @@ class General {
   }
 };
 
-class Struct {
- public:
-  /* Pack 64 bit number to bytes */
-  packed_64 pack64(int64_t number) {
-   packed_64 packed_bytes;
-   for(int i = 0; i < sizeof(packed_bytes); i++) {
-    packed_bytes.bytes[i] = number & 0xff;
-    number >>= 8;
-   }
-   return packed_bytes;
+namespace pack {
+  std::string p64(uint64_t n) {
+    return std::string((char *)&n, 8);
   }
-  /* Pack 32 bit number to char bytes */
-  packed_32 pack32(int32_t number) {
-   packed_32 packed_bytes;
-   for(int i = 0; i < sizeof(packed_bytes); i++){
-    packed_bytes.bytes[i] = number & 0xff;
-    number >>= 8;
-   }
-   return packed_bytes;
+
+  uint64_t u64(const std::string &buf) {
+    assert(buf.length() == 8);
+    return *(uint64_t *)buf.c_str();
   }
-  /* Unpack bytes to 64 bit number */
-  int64_t unpack64(packed_64 packed_bytes) {
-   int64_t unpacked_number {0};
-   for(int i = 1; i < 9 ; i++) {
-    unpacked_number += ( ( (int64_t)packed_bytes.bytes[i - 1] ) << ( 64 - (8 * i) ) );
-   }
-   return unpacked_number;
+
+  std::string p32(uint32_t n) {
+    return std::string((char *)&n, 4);
   }
-  /* Unpack bytes to 32 bit number */
-  int32_t unpack32(packed_32 packed_bytes) {
-   int32_t unpacked_number {0};
-   for(int i = 1; i < 5 ; i++) {
-    unpacked_number += ( ( (int32_t)packed_bytes.bytes[i - 1] ) << ( 32 - (8 * i) )  );
-   }
-   return unpacked_number;
+
+  uint32_t u32(const std::string &buf) {
+    assert(buf.length() == 4);
+    return *(uint32_t *)buf.c_str();
   }
-  /* Flat same as pwntools flat */
-  Char* flat(std::vector<int64_t> chain) {
-    Char *c = new Char(chain.size() * 8);
-    packed_64 temp;
-    for(int i = 0, k = 0; i < chain.size(); i++) {
-     temp = this->pack64(chain.at(i));
-     for(int j = 0; j < 8; j++) { c->bytes[k++] = temp.bytes[j]; }
-    }
-    return c;
+
+  std::string flat(std::vector<uint64_t> chain) {
+    std::string s;
+    for(int i=0; i<chain.size(); ++i)
+        s += p64(chain[i]);
+    return s;
   }
-  Char* flat(std::vector<int32_t> chain) {
-   Char* c = new Char(chain.size() * 4 );
-   packed_32 temp;
-   for(int o = 0, p = 0; o < chain.size(); o++) {
-    temp = this->pack32(chain.at(o));
-    for(int l = 0; l < 4; l++) {c->bytes[p++] = temp.bytes[l];}
-   }
-   return c;
+
+  std::string flat(std::vector<uint64_t> chain) {
+    std::string s;
+    for(int i=0; i<chain.size(); ++i)
+        s += p64(chain[i]);
+    return s;
   }
 };
 
