@@ -56,6 +56,10 @@ namespace neolib {
                         line = line + lineLength;
                 }
         }
+
+        void hexdump(std::string data) {
+         hex_dump(data.c_str(),data.size(),std::cout);
+        }
 }
 
 namespace pack {

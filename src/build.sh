@@ -1,1 +1,1 @@
-g++ utils.cc Socket.cc remote.cc process.cc main.cc -o ../bin/main -pthread
+g++ utils.cc Socket.cc remote.cc process.cc -o /lib/libpwn.so -pthread -shared -fPIC

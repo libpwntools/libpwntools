@@ -96,3 +96,11 @@ void Process::interactive() {
         usleep(10000);
     }
 }
+
+size_t Process::sendafter(const std::string &rcv, const std::string &data) {
+    this->recvuntil(rcv);
+    return this->send(rcv);
+}
+size_t Process::sendlineafter(const std::string &rcv, const std::string &data) {
+    return this->sendafter(rcv,data+"\n");
+}
