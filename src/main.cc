@@ -7,5 +7,6 @@ int main(void) {
  io.send("%p%p%p%p\n");
  std::string S = io.recvline();
  std::cout << S ;
+ neolib::hex_dump(S.c_str(),S.size(),std::cout);
  io.interactive();
 }
