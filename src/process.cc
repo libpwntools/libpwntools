@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <sys/prctl.h>
 #include <thread>
+#include "pwntools.h"
 
 bool ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
@@ -91,12 +92,13 @@ void Process::interactive() {
     }
 }
 
-
 /* Example
+
   int main(void) {
       Process io("/bin/cat");
-      io.sendline("Pepega");
+      io.sendline("Pepega" + pack::p64(0x4141));
       std::cout << io.recv(1024);
       io.interactive();
   }
+
 */
