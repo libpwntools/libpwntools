@@ -76,6 +76,10 @@ std::string Process::recvuntil(const std::string &buf) {
     return s;
 }
 
+std::string Process::recvline() {
+    return this->recvuntil("\n");
+}
+
 void Process::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);

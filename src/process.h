@@ -10,6 +10,7 @@ class Process {
         void interactive();
         size_t sendline(const std::string&);
         std::string recvuntil(const std::string&);
+        std::string recvline();
     private:
         int pid;
         int _stdin;
