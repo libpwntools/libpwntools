@@ -4,10 +4,15 @@
 #include "process.h"
 #include <sys/types.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/prctl.h>
+#include <thread>
+
+bool ends_with(const std::string& a, const std::string& b) {
+    if (b.size() > a.size()) return false;
+    return std::equal(a.begin() + a.size() - b.size(), a.end(), b.begin());
+}
 
 Process::Process() {}
 Process::Process(const std::string &path) {
@@ -50,12 +55,48 @@ size_t Process::send(const std::string &buf) {
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
-/* Example:
+void Process::recvloop() {
+    std::string s;
+    while(true) {
+        s = this->recv(1024);
+        write(1, s.c_str(), s.length());
+        s.clear();
+    }
+}
 
+size_t Process::sendline(const std::string &buf) {
+    return this->send(buf + "\n");
+}
+
+std::string Process::recvuntil(const std::string &buf) {
+    std::string s;
+    while (!ends_with(s, buf))
+        s += this->recv(1);
+    return s;
+}
+
+void Process::interactive() {
+    std::cout.setf(std::ios::unitbuf);
+    std::cin.setf(std::ios::unitbuf);
+
+    std::thread t1(&Process::recvloop, this);
+    usleep(1500);
+
+    std::string inp;
+    while(true) {
+        std::cout << "$ ";
+        std::cin >> inp;
+        this->sendline(inp);
+        usleep(5000);
+    }
+}
+
+
+/* Example
   int main(void) {
       Process io("/bin/cat");
-      io.send("Pepega");
+      io.sendline("Pepega");
       std::cout << io.recv(1024);
+      io.interactive();
   }
-
 */

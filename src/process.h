@@ -7,8 +7,12 @@ class Process {
         Process(const std::string&);
         size_t send(const std::string&);
         std::string recv(size_t len);
+        void interactive();
+        size_t sendline(const std::string&);
+        std::string recvuntil(const std::string&);
     private:
         int pid;
         int _stdin;
         int _stdout;
+        void recvloop();
 };
