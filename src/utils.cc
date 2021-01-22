@@ -47,3 +47,8 @@ template<class Elem, class Traits>
                 }
 }
 
+std::string str_repeat(const std::string &str, size_t n) {
+    std::string s;
+    for(int i=0;i<n;++i) s += str;
+    return s;
+}
