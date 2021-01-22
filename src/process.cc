@@ -46,10 +46,10 @@ void Process::gdb_attach() {
 }
 
 std::string Process::recv(size_t len) {
-    char * buf = (char *)malloc(len);
+    char* buf = new char[len + 1];
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
-    free(buf);
+    delete buf;
     return s;
 }
 

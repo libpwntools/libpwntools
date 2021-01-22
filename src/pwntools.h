@@ -60,6 +60,12 @@ namespace neolib {
         void hexdump(std::string data) {
          hex_dump(data.c_str(),data.size(),std::cout);
         }
+
+        void pause() {
+            char pause_buffer[0x100];
+            std::cout << "(pause) Press enter to release." << std::endl;
+            fgets(pause_buffer,0x2,stdin);
+        }
 }
 
 namespace pack {
