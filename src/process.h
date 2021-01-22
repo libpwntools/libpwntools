@@ -3,7 +3,7 @@
 class Process {
     public:
         Process();
-        Process(const std::string&);
+        Process(const std::string&, bool);
         size_t send(const std::string&);
         std::string recv(size_t len);
         void interactive();
@@ -18,5 +18,8 @@ class Process {
         int pid;
         int _stdin;
         int _stdout;
+        bool debug;
         void recvloop();
 };
+
+void hexdump(void *, long);

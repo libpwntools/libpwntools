@@ -1,6 +1,7 @@
 #pragma once
 #include "Socket.h"
 #include <string>
+#include "remote.h"
 
 class Remote {
  private:
@@ -8,9 +9,9 @@ class Remote {
   std::string port;
   Socket* sock;
   std::vector<Socket> reads;
-
+  bool debug;
  public:
-  Remote(const std::string&, uint32_t);
+  Remote(const std::string&, uint32_t, bool);
   std::string recv(size_t);
   std::string recvline();
   std::string recvuntil(const std::string&);
@@ -22,3 +23,5 @@ class Remote {
   size_t sendline(const std::string&);
   void shutdown();
 };
+
+void hexdump(void *, long);

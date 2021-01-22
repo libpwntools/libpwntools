@@ -11,11 +11,11 @@ size_t recv_wrapper(int fd, char * buf, size_t len, int z) {
     return recv(fd, buf, len, z);
 }
 
-Remote::Remote(const std::string &ip, uint32_t port_number) {
+Remote::Remote(const std::string &ip, uint32_t port_number, bool is_debug = false) {
     this->host = ip;
     this->port = std::to_string(port_number);
     this->sock = new Socket(AF_INET,SOCK_STREAM,0);
-
+    this->debug = is_debug;
     if(!this->sock) {
         std::cerr << "Connection Failed " << std::endl;
         exit(-1);
@@ -30,6 +30,7 @@ std::string Remote::recv(size_t len) {
 	len = recv_wrapper(sock->sock, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
+ if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump((void* )s.c_str(),s.size()) ;}
 	return s;
 }
 
@@ -47,6 +48,7 @@ std::string Remote::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
         s += this->recv(1);
+    if(this->debug) { std::cout << "(Recv)\n"; hexdump((void* )s.c_str(),s.size() ) ;}
     return s;
 }
 
@@ -59,6 +61,7 @@ std::string Remote::recvline() {
 }
 
 size_t Remote::send(const std::string &data) {
+    if(this->debug) {std::cout << "(Send)\n"; hexdump((void *)data.c_str(),data.size()); }
     return send_wrapper(sock->sock,data.c_str(),data.size(),0);
 }
 
@@ -82,6 +85,7 @@ void Remote::interactive() {
     while(true) {
         std::cout << "$ ";
         getline(std::cin ,inp);
+        if(this->debug) {std::cout << "(Send)\n"; hexdump((void *)inp.c_str(),inp.size()); }
         this->sendline(inp);
         usleep(250000);
     }

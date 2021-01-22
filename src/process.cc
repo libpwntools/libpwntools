@@ -11,8 +11,62 @@
 #include "process.h"
 #include "utils.h"
 
+
+void hexdump(void *pAddressIn, long  lSize)
+{
+ char szBuf[100];
+ long lIndent = 1;
+ long lOutLen, lIndex, lIndex2, lOutLen2;
+ long lRelPos;
+ struct { char *pData; unsigned long lSize; } buf;
+ unsigned char *pTmp,ucTmp;
+ unsigned char *pAddress = (unsigned char *)pAddressIn;
+
+   buf.pData   = (char *)pAddress;
+   buf.lSize   = lSize;
+
+   while (buf.lSize > 0)
+   {
+      pTmp     = (unsigned char *)buf.pData;
+      lOutLen  = (int)buf.lSize;
+      if (lOutLen > 16)
+          lOutLen = 16;
+
+      // create a 64-character formatted output line:
+      sprintf(szBuf, " >                            "
+                     "                      "
+                     "    %08lX", pTmp-pAddress);
+      lOutLen2 = lOutLen;
+
+      for(lIndex = 1+lIndent, lIndex2 = 53-15+lIndent, lRelPos = 0;
+          lOutLen2;
+          lOutLen2--, lIndex += 2, lIndex2++
+         )
+      {
+         ucTmp = *pTmp++;
+
+         sprintf(szBuf + lIndex, "%02X ", (unsigned short)ucTmp);
+         if(!isprint(ucTmp))  ucTmp = '.'; // nonprintable char
+         szBuf[lIndex2] = ucTmp;
+
+         if (!(++lRelPos & 3))     // extra blank after 4 bytes
+         {  lIndex++; szBuf[lIndex+2] = ' '; }
+      }
+
+      if (!(lRelPos & 3)) lIndex--;
+
+      szBuf[lIndex  ]   = '<';
+      szBuf[lIndex+1]   = ' ';
+
+      printf("%s\n", szBuf);
+
+      buf.pData   += lOutLen;
+      buf.lSize   -= lOutLen;
+   }
+}
+
 Process::Process() {}
-Process::Process(const std::string &path) {
+Process::Process(const std::string &path, bool debug_mode = false) {
     int inpipefd[2];
     int outpipefd[2];
 
@@ -38,6 +92,7 @@ Process::Process(const std::string &path) {
     close(outpipefd[0]);
     this->_stdin = outpipefd[1];
     this->_stdout = inpipefd[0];
+    this->debug = debug_mode;
 }
 
 void Process::gdb_attach() {
@@ -51,10 +106,12 @@ std::string Process::recv(size_t len) {
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
     delete buf;
+    if(this->debug && len > 1) {std::cout << "Recv: \n"; hexdump((void *)s.c_str(),s.size());}
     return s;
 }
 
 size_t Process::send(const std::string &buf) {
+    if(this->debug) {std::cout << "Send: \n"; hexdump((void *)buf.c_str(),buf.size());}
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
@@ -75,6 +132,7 @@ std::string Process::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
         s += this->recv(1);
+    if(this->debug) {std::cout << "Recv: \n"; hexdump((void *)buf.c_str(),buf.size());}
     return s;
 }
 
