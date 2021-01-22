@@ -83,6 +83,6 @@ void Remote::interactive() {
         std::cout << "$ ";
         getline(std::cin ,inp);
         this->sendline(inp);
-        usleep(5000);
+        usleep(250000);
     }
 }
