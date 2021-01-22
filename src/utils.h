@@ -10,3 +10,4 @@ void hexdump(void *, long);
 std::string string_to_hex(const std::string&);
 int hex_value(unsigned char);
 std::string hex_to_string(const std::string&);
+void remove_newline(std::string &);

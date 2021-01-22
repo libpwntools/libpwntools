@@ -124,8 +124,7 @@ std::string str_xor(const std::string &a, const std::string &b) {
     return c;
 }
 
-std::string string_to_hex(const std::string& input)
-{
+std::string string_to_hex(const std::string& input) {
     static const char hex_digits[] = "0123456789ABCDEF";
 
     std::string output;
@@ -138,8 +137,7 @@ std::string string_to_hex(const std::string& input)
     return output;
 }
 
-int hex_value(unsigned char hex_digit)
-{
+int hex_value(unsigned char hex_digit) {
     static const signed char hex_values[256] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -163,8 +161,7 @@ int hex_value(unsigned char hex_digit)
     return value;
 }
 
-std::string hex_to_string(const std::string& input)
-{
+std::string hex_to_string(const std::string& input) {
     const auto len = input.length();
     if (len & 1) throw std::invalid_argument("odd length");
 
@@ -177,4 +174,10 @@ std::string hex_to_string(const std::string& input)
         output.push_back(hi << 4 | lo);
     }
     return output;
+}
+
+void remove_newline(std::string &s) {
+    int pos;
+    if((pos=s.find('\n')) != std::string::npos)
+        s.erase(pos);
 }
