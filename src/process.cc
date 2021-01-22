@@ -100,6 +100,8 @@ void Process::interactive() {
 
 void Process::_close() {
     kill(this->pid,SIGKILL);
+    close(this->_stdin);
+    close(this->_stdout);
 }
 
 size_t Process::sendafter(const std::string &rcv, const std::string &data) {
