@@ -1,4 +1,2 @@
 all:
-	g++ exp.cpp -o exp -pthread -lpwn
-clean:
-	exp
+	g++ utils.cc Socket.cc remote.cc process.cc main.cc -o /tmp/main -pthread
