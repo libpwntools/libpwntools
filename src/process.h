@@ -3,7 +3,7 @@
 class Process {
     public:
         Process();
-        Process(const std::string&, bool);
+        Process(const std::string&);
         size_t send(const std::string&);
         std::string recv(size_t len);
         void interactive();
@@ -14,6 +14,7 @@ class Process {
         size_t sendafter(const std::string&, const std::string&);
         void gdb_attach();
         void _close();
+        void set_debug(bool);
     private:
         int pid;
         int _stdin;

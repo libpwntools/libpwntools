@@ -13,7 +13,7 @@
 
 
 Process::Process() {}
-Process::Process(const std::string &path, bool debug_mode = false) {
+Process::Process(const std::string &path) {
     int inpipefd[2];
     int outpipefd[2];
 
@@ -39,7 +39,11 @@ Process::Process(const std::string &path, bool debug_mode = false) {
     close(outpipefd[0]);
     this->_stdin = outpipefd[1];
     this->_stdout = inpipefd[0];
-    this->debug = debug_mode;
+    this->debug = false;
+}
+
+void Process::set_debug(bool mode) {
+    this->debug = mode;
 }
 
 void Process::gdb_attach() {

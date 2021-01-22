@@ -5,5 +5,7 @@
 #include <stdint.h>
 
 int main() {
-    neolib::hexdump(str_xor("test", "AAAAAAAAA"));
+    Process p("/bin/cat");
+    p.set_debug(true);
+    p.interactive();
 }

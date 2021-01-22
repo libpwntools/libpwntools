@@ -11,11 +11,11 @@ size_t recv_wrapper(int fd, char * buf, size_t len, int z) {
     return recv(fd, buf, len, z);
 }
 
-Remote::Remote(const std::string &ip, uint32_t port_number, bool is_debug = false) {
+Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
     this->port = std::to_string(port_number);
     this->sock = new Socket(AF_INET,SOCK_STREAM,0);
-    this->debug = is_debug;
+    this->debug = false;
     if(!this->sock) {
         std::cerr << "Connection Failed " << std::endl;
         exit(-1);
@@ -34,6 +34,9 @@ std::string Remote::recv(size_t len) {
 	return s;
 }
 
+void Remote::set_debug(bool mode) {
+    this->debug = mode;
+}
 
 void Remote::recvloop() {
     std::string s;

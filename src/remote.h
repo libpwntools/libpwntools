@@ -11,7 +11,7 @@ class Remote {
   std::vector<Socket> reads;
   bool debug;
  public:
-  Remote(const std::string&, uint32_t, bool);
+  Remote(const std::string&, uint32_t);
   std::string recv(size_t);
   std::string recvline();
   std::string recvuntil(const std::string&);
@@ -22,6 +22,7 @@ class Remote {
   void interactive();
   size_t sendline(const std::string&);
   void shutdown();
+  void set_debug(bool);
 };
 
 void hexdump(void *, long);
