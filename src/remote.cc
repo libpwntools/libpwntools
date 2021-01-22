@@ -93,5 +93,4 @@ void Remote::interactive() {
 
 void Remote::shutdown() {
     close(sock->sock);
-    exit(0);
 }
