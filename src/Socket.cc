@@ -17,6 +17,7 @@ Socket::Socket(int domain, int type, int protocol)
     if (sock < 0) {
         //exit(1);
         std::cerr << "opening socket error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     address_info.ai_family = domain;
     address_info.ai_socktype = type;
@@ -37,6 +38,7 @@ int Socket::bind(std::string ip, std::string port){
         if (status < 0) {
             //exit(1);
             std::cerr << "bind error: " << gai_strerror(errno) << std::endl;
+            exit(-1);
         }
         return status;
     }
@@ -48,7 +50,7 @@ int Socket::bind(std::string ip, std::string port){
     address_info.ai_flags = AI_PASSIVE;
     if ((status = getaddrinfo(ip.c_str(), port.c_str(), &address_info, &res)) != 0) {
         std::cerr << "getaddrinfo error: " << gai_strerror(errno) << std::endl;
-        //exit(1);
+        exit(1);
         return status;
     }
     address_info.ai_addrlen = res->ai_addrlen;
@@ -58,6 +60,7 @@ int Socket::bind(std::string ip, std::string port){
     if (status < 0) {
         //exit(1);
         std::cerr << "bind error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     return status;
 }
@@ -71,8 +74,8 @@ int Socket::connect(std::string ip, std::string port){
         strncpy(addr.sun_path, ip.c_str(), sizeof(addr.sun_path)-1);
         int status = ::connect(sock, (struct sockaddr*)&addr, sizeof(addr));
         if (status < 0) {
-            //exit(1);
             std::cerr << "connect error: " << gai_strerror(errno) << std::endl;
+            exit(1);
         }
         return status;
     }
@@ -84,8 +87,8 @@ int Socket::connect(std::string ip, std::string port){
     int status;
     if ((status = getaddrinfo(ip.c_str(), port.c_str(), &address_info, &res)) != 0){
         std::cerr << "getaddrinfo error: " << gai_strerror(errno);
-        //exit(1);
         return status;
+        exit(1);
     }
     address_info.ai_addrlen = res->ai_addrlen;
     address_info.ai_addr = res->ai_addr;
@@ -94,6 +97,7 @@ int Socket::connect(std::string ip, std::string port){
     if (status < 0) {
         //exit(1);
         std::cerr << "connect error: " << gai_strerror(status) << std::endl;
+        exit(-1);
     }
     return status;
 }
@@ -104,6 +108,7 @@ int Socket::listen(int max_queue){
     if (status < 0) {
         //exit(1);
         std::cerr << "listen error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     return status;
 }
@@ -116,6 +121,7 @@ Socket* Socket::accept(){
     if (newsock < 0) {
         //exit(1);
         std::cerr << "accept error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     Socket *newSocket = new Socket(address_info.ai_family,address_info.ai_socktype,address_info.ai_protocol);
     newSocket->sock = newsock;
@@ -126,6 +132,7 @@ Socket* Socket::accept(){
     if (status < 0) {
         //exit(1);
         std::cerr << "getnameinfo error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     newSocket->address = host;
     newSocket->address_info.ai_family = their_addr.ss_family;
@@ -139,6 +146,7 @@ int Socket::socket_write(std::string msg){
     if (status < 0) {
         //exit(1);
         std::cerr << "write error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     return status;
 }
@@ -157,6 +165,8 @@ int Socket::socket_safe_read(std::string &buf,int len,int seconds){
     if (status < 0) {
         //exit(1);
         std::cerr << "read error: " << gai_strerror(errno) << std::endl;
+        exit(1);
+
     }
     buf = std::string(buffer);
     return status;
@@ -168,6 +178,7 @@ int Socket::socket_read(std::string &buf,int len){
     if (status < 0) {
         //exit(1);
         std::cerr << "read error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     buf = std::string(buffer);
     return status;
@@ -181,6 +192,7 @@ int Socket::socket_writeTo(std::string msg, std::string ip, std::string port){
     int status;
     if ((status = getaddrinfo(ip.c_str(), port.c_str(), &address_info, &res)) != 0){
         std::cerr << "getaddrinfo error: " << gai_strerror(errno) << std::endl;
+        exit(1);
         //exit(1);
         return status;
     }
@@ -191,6 +203,7 @@ int Socket::socket_writeTo(std::string msg, std::string ip, std::string port){
     if (status < 0) {
         //exit(1);
         std::cerr << "writeTo error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     return status;
 }
@@ -201,8 +214,7 @@ int Socket::socket_readFrom(std::string &buf, int len, std::string ip, std::stri
     int status;
     if ((status = getaddrinfo(ip.c_str(), port.c_str(), &address_info, &res)) != 0){
         std::cerr << "getaddrinfo error: " << gai_strerror(errno) << std::endl;
-        //exit(1);
-        return status;
+        exit(1);
     }
     address_info.ai_addrlen = res->ai_addrlen;
     address_info.ai_addr = res->ai_addr;
@@ -211,6 +223,7 @@ int Socket::socket_readFrom(std::string &buf, int len, std::string ip, std::stri
     if (status < 0) {
         //exit(1);
         std::cerr << "readFrom error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     buf = std::string(buffer); 
     return status;
@@ -222,6 +235,7 @@ int Socket::socket_set_opt(int level, int optname, void* optval){
     if (status < 0) {
         //exit(1);
         std::cerr << "socket_set_opt error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     return status;
 }
@@ -232,6 +246,7 @@ int Socket::socket_get_opt(int level, int optname, void* optval){
     if (status < 0) {
         //exit(1);
         std::cerr << "socket_get_opt error: " << gai_strerror(errno) << std::endl;
+        exit(1);
     }
     return status;
 }
@@ -241,12 +256,14 @@ int Socket::set_blocking(){
     if (status < 0) {
         //exit(1);
         std::cerr << "set_blocking(get) error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     status &= (~O_NONBLOCK);
     status = fcntl(sock, F_SETFL, status);
     if (status < 0) {
         //exit(1);
         std::cerr << "set_blocking(set) error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     return (int)status;
 }
@@ -256,12 +273,14 @@ int Socket::set_non_blocking(){
     if (status < 0) {
         //exit(1);
         std::cerr << "set_non_blocking(get) error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     status |= O_NONBLOCK;
     status = fcntl(sock, F_SETFL, status);
     if (status < 0) {
         //exit(1);
         std::cerr << "set_non_blocking(set) error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     return (int)status;
 }
@@ -271,6 +290,7 @@ int Socket::socket_shutdown(int how){
     if (status < 0) {
         //exit(1);
         std::cerr << "shutdown error: " << gai_strerror(errno) << std::endl;
+        exit(-1);
     }
     return status;
 }

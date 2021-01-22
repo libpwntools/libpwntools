@@ -86,3 +86,8 @@ void Remote::interactive() {
         usleep(250000);
     }
 }
+
+void Remote::shutdown() {
+    close(sock->sock);
+    exit(0);
+}
