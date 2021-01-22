@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <sys/prctl.h>
 #include <thread>
+#include <signal.h>
 #include "process.h"
 #include "utils.h"
 
@@ -95,6 +96,10 @@ void Process::interactive() {
         this->sendline(inp);
         usleep(10000);
     }
+}
+
+void Process::_close() {
+    kill(this->pid,SIGKILL);
 }
 
 size_t Process::sendafter(const std::string &rcv, const std::string &data) {
