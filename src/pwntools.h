@@ -62,9 +62,8 @@ namespace neolib {
         }
 
         void pause() {
-            char pause_buffer[0x100];
             std::cout << "(pause) Press enter to release." << std::endl;
-            fgets(pause_buffer,0x2,stdin);
+            getchar();
         }
 }
 
