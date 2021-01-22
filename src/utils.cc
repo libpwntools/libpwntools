@@ -52,3 +52,21 @@ std::string str_repeat(const std::string &str, size_t n) {
     for(int i=0;i<n;++i) s += str;
     return s;
 }
+
+std::string str_xor(const std::string &a, const std::string &b) {
+    std::string c;
+    size_t len_a = a.length();
+    size_t len_b = b.length();
+    assert(len_a && len_b);
+
+    if(len_a < len_b) {
+        c = a;
+        for(int i=0; i<len_a; ++i)
+            c[i] ^= b[i % len_b];
+    } else {
+        c = b;
+        for(int i=0; i<len_b; ++i)
+            c[i] ^= a[i % len_b];
+    }
+    return c;
+}
