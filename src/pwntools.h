@@ -109,3 +109,4 @@ namespace pack {
 #include "process.h"
 #include "remote.h"
 #include "utils.h"
+#include "elf.h"
