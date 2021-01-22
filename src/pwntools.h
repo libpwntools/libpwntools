@@ -100,6 +100,14 @@ namespace pack {
         s += pack::p32(chain[i]);
     return s;
   }
+  std::string construct_file(FILE *fp) {
+      char* tmp = new char[0x216];
+      memcpy(tmp, (char* )fp, 0x216);
+      std::string s;
+      s = std::string(tmp, 0x216);
+      delete tmp;
+      return s;
+  }
 };
 
 #endif
