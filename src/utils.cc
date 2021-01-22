@@ -59,14 +59,14 @@ std::string str_xor(const std::string &a, const std::string &b) {
     size_t len_b = b.length();
     assert(len_a && len_b);
 
-    if(len_a < len_b) {
+    if(len_a > len_b) {
         c = a;
         for(int i=0; i<len_a; ++i)
             c[i] ^= b[i % len_b];
     } else {
         c = b;
         for(int i=0; i<len_b; ++i)
-            c[i] ^= a[i % len_b];
+            c[i] ^= a[i % len_a];
     }
     return c;
 }
