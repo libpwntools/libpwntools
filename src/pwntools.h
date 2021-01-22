@@ -102,8 +102,7 @@ namespace pack {
   }
 
   std::string construct_file(FILE *fp) {
-      std::string s((char *)fp, sizeof(FILE));
-      return s;
+      return std::string((char *)fp, sizeof(FILE));
   }
 };
 
