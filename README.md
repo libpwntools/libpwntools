@@ -1,1 +1,1 @@
-### Implementation of pwntools in c++ ~~because i am retarted~~
+### pwntools library in c++
