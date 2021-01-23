@@ -176,8 +176,9 @@ std::string hex_to_string(const std::string& input) {
     return output;
 }
 
-void remove_newline(std::string &s) {
+std::string remove_newline(std::string &s) {
     int pos;
     if((pos=s.find('\n')) != std::string::npos)
         s.erase(pos);
+    return s;
 }
