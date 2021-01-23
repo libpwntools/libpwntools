@@ -64,3 +64,4 @@ namespace pack {
 #include "remote.h"
 #include "utils.h"
 #include "elf.h"
+#include "logger.h"

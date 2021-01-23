@@ -7,5 +7,6 @@
 int main() {
     Process p("/bin/cat");
     p.set_debug(true);
+    log::success("interactive");
     p.interactive();
 }
