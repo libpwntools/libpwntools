@@ -1,4 +1,4 @@
-#include "elf.h"
+#include <libpwntools/elf.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

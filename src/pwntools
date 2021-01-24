@@ -1,3 +1,5 @@
+// <pwntools> -*- C++ -*-
+
 #pragma once
 #ifndef PWNTOOLS_H
 #define PWNTOOLS_H
@@ -111,8 +113,8 @@ namespace pack {
 };
 
 #endif
-#include "process.h"
-#include "remote.h"
-#include "utils.h"
-#include "elf.h"
-#include "logger.h"
+#include <libpwntools/process.h>
+#include <libpwntools/remote.h>
+#include <libpwntools/utils.h>
+#include <libpwntools/elf.h>
+#include <libpwntools/logger.h>

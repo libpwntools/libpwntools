@@ -8,9 +8,8 @@
 #include <sys/prctl.h>
 #include <thread>
 #include <signal.h>
-#include "process.h"
-#include "utils.h"
-
+#include <libpwntools/process.h>
+#include <libpwntools/utils.h>
 
 Process::Process() {}
 Process::Process(const std::string &path) {

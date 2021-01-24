@@ -1,5 +1,5 @@
-#include "remote.h"
-#include "utils.h"
+#include <libpwntools/remote.h>
+#include <libpwntools/utils.h>
 #include <cassert>
 #include <thread>
 

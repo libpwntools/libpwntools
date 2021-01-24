@@ -6,7 +6,7 @@
 //  Copyright © 2016 Kay Makowsky. All rights reserved.
 //
 
-#include "Socket.h"
+#include <libpwntools/Socket.h>
 Socket::Socket(){
     
 }

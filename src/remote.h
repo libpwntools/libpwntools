@@ -1,7 +1,7 @@
 #pragma once
-#include "Socket.h"
+#include <libpwntools/Socket.h>
 #include <string>
-#include "remote.h"
+#include <libpwntools/remote.h>
 
 class Remote {
  private:
