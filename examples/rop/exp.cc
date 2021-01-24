@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "pwntools.h"
+#include <pwntools>
 
 int main(void) {
     Process io("./bof");

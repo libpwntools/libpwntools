@@ -1,4 +1,4 @@
-#include "pwntools.h"
+#include <pwntools>
 #include <iostream>
 using namespace pack;
 

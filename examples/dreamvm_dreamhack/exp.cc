@@ -1,4 +1,4 @@
-#include <pwntools.h>
+#include <pwntools>
 #include <vector>
 #include <iostream>
 #include <string>
@@ -10,7 +10,7 @@ typedef uint64_t number;
 
 // connection
 //Process io("./dreamvm",false);
-Remote io("host1.dreamhack.games",17822,false);
+Remote io("host1.dreamhack.games",17822);
 
 // Gadgets
 number L_POP_RDI = 0x400903;
