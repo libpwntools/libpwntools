@@ -5,8 +5,5 @@
 #include <stdint.h>
 
 int main() {
-    Process p("/bin/cat");
-    p.set_debug(true);
-    log::success("interactive");
-    p.interactive();
+    std::cout << pack::flat(0xdeadbeef,0x41414141, 0xbeefdeadL, "asdf", 0x42L);
 }
