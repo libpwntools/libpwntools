@@ -1,6 +1,7 @@
 #include <string>
 #include <libpwntools/utils.h>
 #include <ostream>
+#include <bits/stdc++.h> 
 
 bool ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
@@ -181,4 +182,11 @@ std::string remove_newline(std::string &s) {
     if((pos=s.find('\n')) != std::string::npos)
         s.erase(pos);
     return s;
+}
+
+std::string Hex(uint64_t n) {
+    std::stringstream ss;
+    ss << std::hex << n;
+    std::string res = "0x" + ss.str();
+    return res;
 }
