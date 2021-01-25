@@ -118,3 +118,4 @@ namespace pack {
 #include <libpwntools/utils.h>
 #include <libpwntools/elf.h>
 #include <libpwntools/logger.h>
+#include <libpwntools/fmtstr.h>
