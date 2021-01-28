@@ -15,7 +15,7 @@
 #define AMD64 64
 #define I386 86
 
-namespace neolib{
+namespace pwnlib{
     void pause() {
         std::cout << "(pause) Press enter to release." << std::endl;
         getchar();
