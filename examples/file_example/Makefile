@@ -1,4 +1,4 @@
 all:
-	g++ -std=c++17 -pthread -lpwntools -o exp exp.cc
+	g++ -o exp -std=c++17 -pthread exp.cc -lpwntools
 clean:
 	rm exp
