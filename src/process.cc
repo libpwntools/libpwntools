@@ -56,12 +56,12 @@ std::string Process::recv(size_t len) {
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
     delete buf;
-    if(this->debug && len > 1) {std::cout << "Recv: \n"; hexdump((void *)s.c_str(),s.size());}
+    if(this->debug && len > 1) {std::cout << "Recv: \n"; hexdump(s);}
     return s;
 }
 
 size_t Process::send(const std::string &buf) {
-    if(this->debug) {std::cout << "Send: \n"; hexdump((void *)buf.c_str(),buf.size());}
+    if(this->debug) {std::cout << "Send: \n"; hexdump(buf);}
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
@@ -82,7 +82,7 @@ std::string Process::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
         s += this->recv(1);
-    if(this->debug) {std::cout << "Recv: \n"; hexdump((void *)buf.c_str(),buf.size());}
+    if(this->debug) {std::cout << "Recv: \n"; hexdump(buf);}
     return s;
 }
 

@@ -32,7 +32,7 @@ std::string Remote::recv(size_t len) {
 	len = recv_wrapper(sock->sock, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
- if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump((void* )s.c_str(),s.size()) ;}
+ if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump(s) ;}
 	return s;
 }
 
@@ -53,7 +53,7 @@ std::string Remote::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
         s += this->recv(1);
-    if(this->debug) { std::cout << "(Recv)\n"; hexdump((void* )s.c_str(),s.size() ) ;}
+    if(this->debug) { std::cout << "(Recv)\n"; hexdump(s) ;}
     return s;
 }
 
@@ -66,7 +66,7 @@ std::string Remote::recvline() {
 }
 
 size_t Remote::send(const std::string &data) {
-    if(this->debug) {std::cout << "(Send)\n"; hexdump((void *)data.c_str(),data.size()); }
+    if(this->debug) {std::cout << "(Send)\n"; hexdump(data); }
     return send_wrapper(sock->sock,data.c_str(),data.size(),0);
 }
 
@@ -90,7 +90,7 @@ void Remote::interactive() {
     while(true) {
         std::cout << "$ ";
         getline(std::cin ,inp);
-        if(this->debug) {std::cout << "(Send)\n"; hexdump((void *)inp.c_str(),inp.size()); }
+        if(this->debug) {std::cout << "(Send)\n"; hexdump(inp); }
         this->sendline(inp);
         usleep(250000);
     }

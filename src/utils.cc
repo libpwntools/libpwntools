@@ -48,7 +48,7 @@ template<class Elem, class Traits>
                 }
 }
 
-void hexdump(void *pAddressIn, long  lSize)
+void hexdump_wrap(void *pAddressIn, long  lSize)
 {
  char szBuf[100];
  long lIndent = 1;
@@ -99,6 +99,10 @@ void hexdump(void *pAddressIn, long  lSize)
       buf.pData   += lOutLen;
       buf.lSize   -= lOutLen;
     }
+}
+
+void hexdump(std::string s) {
+	hexdump_wrap((void *)s.c_str(),s.size());
 }
 
 std::string str_repeat(const std::string &str, size_t n) {

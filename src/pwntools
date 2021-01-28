@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <list>
 #include <cassert>
+#include <cstring>
 #define AMD64 64
 #define I386 86
 
@@ -114,10 +115,11 @@ class file {
 
 		file() {
 			this->fp = new FILE;
+			std::memset((void *)fp, 0, sizeof(FILE) );
 		}
 
 		std::string construct() {
-			return std::string((char *)this->fp, sizeof(FILE));
+			return std::string((char *)this->fp, sizeof(FILE) );
 		}
 
 		~file() {
