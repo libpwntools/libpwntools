@@ -11,6 +11,7 @@ class Remote {
   std::vector<Socket> reads;
   bool debug;
  public:
+  Remote();
   Remote(const std::string&, uint32_t);
   std::string recv(size_t);
   std::string recvline();

@@ -1,5 +1,5 @@
 build:
-	g++ src/utils.cc src/Socket.cc src/remote.cc src/process.cc src/elf.cc -o bin/libpwntools.so -pthread -shared -fPIC -g -std=c++17 -I`pwd`/src/
+	g++ src/fmtstr.cc src/utils.cc src/Socket.cc src/remote.cc src/process.cc src/elf.cc -o bin/libpwntools.so -pthread -shared -fPIC -g -std=c++17 -I`pwd`/src/
 exploit:
 	g++ -o exploit -pthread -std=c++17 exploit.cc
 install:
