@@ -106,11 +106,25 @@ namespace pack {
         pack::flat_raw(buf, std::forward<Ts>(args)...);
         return buf;
     }
-
-    std::string construct_file(FILE *fp) {
-        return std::string((char *)fp, sizeof(FILE));
-    }
 };
+
+class file {
+	public:
+		FILE* fp;
+
+		file() {
+			this->fp = new FILE;
+		}
+
+		std::string construct() {
+			return std::string((char *)this->fp, sizeof(FILE));
+		}
+
+		~file() {
+			delete this->fp;
+		}
+};
+
 
 #endif
 #include <libpwntools/process.h>
