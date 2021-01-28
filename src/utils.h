@@ -6,7 +6,7 @@
 bool ends_with(const std::string&, const std::string&);
 std::string str_repeat(const std::string&, size_t);
 std::string str_xor(const std::string&, const std::string&);
-void hexdump_wrap(void *, long);
+void hexdump_wrap(void *, size_t);
 void hexdump(std::string);
 std::string string_to_hex(const std::string&);
 int hex_value(unsigned char);

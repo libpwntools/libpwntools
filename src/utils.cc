@@ -48,7 +48,7 @@ template<class Elem, class Traits>
                 }
 }
 
-void hexdump_wrap(void *pAddressIn, long  lSize)
+void hexdump_wrap(void *pAddressIn, size_t  lSize)
 {
  char szBuf[100];
  long lIndent = 1;
