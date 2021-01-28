@@ -3,7 +3,7 @@
 #pragma once
 #ifndef PWNTOOLS_H
 #define PWNTOOLS_H
-#include <iostream>
+#include <iostream
 #include <string>
 #include <vector>
 #include <string.h>
