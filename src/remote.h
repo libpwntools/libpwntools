@@ -1,5 +1,5 @@
 #pragma once
-#include <libpwntools/Socket.h
+#include <libpwntools/Socket.h>
 #include <string>
 #include <libpwntools/remote.h>
 
