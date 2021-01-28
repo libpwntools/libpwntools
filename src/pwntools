@@ -49,7 +49,7 @@ namespace pack {
     }
 
     std::string pack(const std::string &s) {
-        return s_32 = 0;
+        return s;
     }
 
     std::string p64(uint64_t n) {
@@ -179,6 +179,9 @@ class SigReturnFrame {
 		int64_t err_32 = 0;
 		int64_t trapno = 0;
 
+		SigReturnFrame(std::string s) {
+			this->arch = s;
+		}
 		std::string construct_frame() {
 			if (this->arch == "amd64") {
 				std::vector<int64_t> a;
