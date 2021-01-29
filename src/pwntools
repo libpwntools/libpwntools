@@ -107,6 +107,18 @@ namespace pack {
         pack::flat_raw(buf, std::forward<Ts>(args)...);
         return buf;
     }
+
+		std::string flat(std::vector<uint32_t> &chain) {
+			std::string s;
+			for(int i = 0; i < chain.size(); i++) { s += pack::p32(chain.at(i));  }
+			return s;
+		}
+
+		std::string flat(std::vector<uint64_t> &chain) {
+			std::string s;
+			for(int i = 0; i < chain.size(); i++) { s += pack::p64(chain.at(i)); }
+			return s;
+		}
 };
 
 class file {
@@ -131,75 +143,87 @@ class SigReturnFrame {
 
 	public:
 		std::string arch;
-		int32_t gs_32 = 0;
-		int32_t fs_32 = 0;
-		int32_t	es_32 = 0;
-		int32_t ds_32 = 0;
-		int32_t edi_32 = 0;
-		int32_t esi_32 = 0;
-		int32_t ebp_32 = 0;
-		int32_t esp_32 = 0;
-		int32_t ebx_32 = 0;
-		int32_t edx_32 = 0;
-		int32_t ecx_32 = 0;
-		int32_t eax_32 = 0;
-		int32_t trapno_32 = 0;
-		int32_t err_32 = 0;
-		int32_t eip_32 = 0;
-		int32_t cs_32 = 0;
-		int32_t eflags_32 = 0;
-		int32_t esp_at_signal_32 = 0;
-		int32_t ss_32 = 0;
-		int32_t fpstate_32 = 0;
-		
-		int64_t uc_flags = 0;
-		int64_t uc = 0;
-		int64_t uc_stack_ss_sp = 0;
-		int64_t uc_stack_ss_flags = 0;
-		int64_t uc_stacl_ss_size = 0;
-		int64_t r8 = 0;
-		int64_t r9 = 0;
-		int64_t r10 = 0;
-		int64_t r11 = 0;
-		int64_t r12 = 0;
-		int64_t r13 = 0;
-		int64_t r14 = 0;
-		int64_t r15 = 0;
-		int64_t rdi = 0;
-		int64_t rsi = 0;
-		int64_t rbp = 0;
-		int64_t rbx = 0;
-		int64_t rdx = 0;
-		int64_t rax = 0;
-		int64_t rcx = 0;
-		int64_t rsp = 0;
-		int64_t rip = 0;
-		int64_t eflags = 0;
-		int64_t csgsfs = 0;
-		int64_t err_32 = 0;
-		int64_t trapno = 0;
+		std::string kernel = "amd64"; // assuming default
+		uint32_t gs_32 = 0;
+		uint32_t fs_32 = 0;
+		uint32_t es_32 = 0;
+		uint32_t ds_32 = 0;
+		uint32_t edi_32 = 0;
+		uint32_t esi_32 = 0;
+		uint32_t ebp_32 = 0;
+		uint32_t esp_32 = 0;
+		uint32_t ebx_32 = 0;
+		uint32_t edx_32 = 0;
+		uint32_t ecx_32 = 0;
+		uint32_t eax_32 = 0;
+		uint32_t trapno_32 = 0;
+		uint32_t err_32 = 0;
+		uint32_t eip_32 = 0;
+		uint32_t cs_32 = 0x23; // default 
+		uint32_t eflags_32 = 0;
+		uint32_t esp_at_signal_32 = 0;
+		uint32_t ss_32 = 0x2b; // default
+		uint32_t fpstate_32 = 0;
 
-		SigReturnFrame(std::string s) {
-			this->arch = s;
+		uint64_t uc_flags = 0;
+		uint64_t uc = 0;
+		uint64_t uc_stack_ss_sp = 0;
+		uint64_t uc_stack_ss_flags = 0;
+		uint64_t uc_stack_ss_size = 0;
+		uint64_t r8 = 0;
+		uint64_t r9 = 0;
+		uint64_t r10 = 0;
+		uint64_t r11 = 0;
+		uint64_t r12 = 0;
+		uint64_t r13 = 0;
+		uint64_t r14 = 0;
+		uint64_t r15 = 0;
+		uint64_t rdi = 0;
+		uint64_t rsi = 0;
+		uint64_t rbp = 0;
+		uint64_t rbx = 0;
+		uint64_t rdx = 0;
+		uint64_t rax = 0;
+		uint64_t rcx = 0;
+		uint64_t rsp = 0;
+		uint64_t rip = 0;
+		uint64_t eflags_64 = 0;
+		uint64_t csgsfs = 0x33; // default
+		uint64_t err_64 = 0;
+		uint64_t trapno_64 = 0;
+		uint64_t oldmask_64 = 0;
+		uint64_t cr2_64 = 0;
+		uint64_t fpstate_64 = 0;
+		uint64_t reserved = 0;
+		uint64_t sigmask = 0;
+
+		SigReturnFrame(std::string kern, std::string file_arch) {
+			this->arch = file_arch;
+			this->kernel = kernel;
+			if(this->kernel == "i386" ) {
+				this->cs_32 = 0x73;
+				this->ss_32 = 0x7b;
+			}
 		}
 		std::string construct_frame() {
-			if (this->arch == "amd64") {
-				std::vector<int64_t> a;
-				farray = {
-					this->uc_flags,this->uc,this->uc_stack_ss_sp,this->uc_stack_ss_flags,this->uc_stacl_ss_size,
+			if (this->kernel == "amd64") {
+				std::vector<uint64_t> a;
+				a = {
+					this->uc_flags,this->uc,this->uc_stack_ss_sp,this->uc_stack_ss_flags,this->uc_stack_ss_size,
 					this->r8,this->r9,this->r10,this->r11,this->r12,this->r13,this->r14,this->r15,this->rdi,
-					this->rsi,this->rbp,this->rbx,this->rdx,this->rax,this->rcx,this->rsp,this->rip,this->eflags,
-					this->csgsfs,this->err_32,this->trapno
+					this->rsi,this->rbp,this->rbx,this->rdx,this->rax,this->rcx,this->rsp,this->rip,this->eflags_64,
+					this->csgsfs,this->err_32,this->trapno_64, this->oldmask_64, this->cr2_64, this->fpstate_64,
+					this->reserved, this->sigmask
 			};
 			return pack::flat(a);
 			}
 			else if (this->arch == "i386") {
-				std::vector<int32_t> b;
-				frame_array = {
+				std::vector<uint32_t> b;
+				b = {
 					this->gs_32, this->fs_32, this->es_32, this->ds_32, this->edi_32, this->esi_32,
 					this->ebp_32, this->esp_32, this->ebx_32, this->edx_32, this->ecx_32, this->eax_32, this->trapno_32,
 					this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32
-				}
+				};
 				return pack::flat(b);
 			}
 			else {
