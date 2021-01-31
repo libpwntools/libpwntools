@@ -96,6 +96,25 @@ void Remote::interactive() {
     }
 }
 
-void Remote::shutdown() {
-    close(sock->sock);
+void Remote::shutdown(const std::string& h) {
+		int how {0};
+    if(h == "send") {
+			how = SHUT_WR;
+		}
+		else if (h == "recv") {
+			how = SHUT_RD;
+		}
+		else {
+			std::cout << "Only send / recv allowed: " << std::endl;
+			exit(1);
+		}
+		if (::shutdown(sock->sock,how) < 0) {
+			std::cout << "Shutdown err" << std::endl;
+			exit(1);
+		}
+		return ;
+}
+
+void Remote::close() {
+	::close(sock->sock);
 }

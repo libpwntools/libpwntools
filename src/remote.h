@@ -22,7 +22,8 @@ class Remote {
   size_t sendlineafter(const std::string&,const std::string&);
   void interactive();
   size_t sendline(const std::string&);
-  void shutdown();
+  void shutdown(const std::string& );
+	void close();
   void set_debug(bool);
 };
 
