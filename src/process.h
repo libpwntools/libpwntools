@@ -13,9 +13,8 @@ class Process {
         size_t sendlineafter(const std::string&, const std::string&);
         size_t sendafter(const std::string&, const std::string&);
         void gdb_attach();
-        void close();
+        void _close();
         void set_debug(bool);
-				void shutdown(const std::string&);
     private:
         int pid;
         int _stdin;

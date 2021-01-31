@@ -34,8 +34,8 @@ Process::Process(const std::string &path) {
         exit(0);
     }
 
-    ::close(inpipefd[1]);
-    ::close(outpipefd[0]);
+    close(inpipefd[1]);
+    close(outpipefd[0]);
     this->_stdin = outpipefd[1];
     this->_stdout = inpipefd[0];
     this->debug = false;
@@ -106,10 +106,10 @@ void Process::interactive() {
     }
 }
 
-void Process::close() {
+void Process::_close() {
     kill(this->pid,SIGKILL);
-    ::close(this->_stdin);
-    ::close(this->_stdout);
+    close(this->_stdin);
+    close(this->_stdout);
 }
 
 size_t Process::sendafter(const std::string &rcv, const std::string &data) {
@@ -118,17 +118,4 @@ size_t Process::sendafter(const std::string &rcv, const std::string &data) {
 }
 size_t Process::sendlineafter(const std::string &rcv, const std::string &data) {
     return this->sendafter(rcv,data+"\n");
-}
-
-void Process::shutdown(const std::string &h) {
-	if(h == "send") {
-		::close(this->_stdin);
-	}
-	else if(h == "recv") {
-		::close(this->_stdout);
-	}
-	else {
-		std::cout << "(sent/recv) supported " << std::endl;
-		exit(-1);
-	}
 }
