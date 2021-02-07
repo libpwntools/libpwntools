@@ -1,5 +1,4 @@
 #include <libpwntools/remote.h>
-#include <libpwntools/utils.h>
 #include <cassert>
 #include <thread>
 
@@ -32,68 +31,13 @@ std::string Remote::recv(size_t len) {
 	len = recv_wrapper(sock->sock, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
- if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump(s) ;}
+    if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump(s) ;}
 	return s;
-}
-
-void Remote::set_debug(bool mode) {
-    this->debug = mode;
-}
-
-void Remote::recvloop() {
-    std::string s;
-    while(true) {
-        s = this->recv(1024);
-        write(1, s.c_str(), s.length());
-        s.clear();
-    }
-}
-
-std::string Remote::recvuntil(const std::string &buf) {
-    std::string s;
-    while (!ends_with(s, buf))
-        s += this->recv(1);
-    if(this->debug) { std::cout << "(Recv)\n"; hexdump(s) ;}
-    return s;
-}
-
-size_t Remote::sendline(const std::string &buf) {
-    return this->send(buf + "\n");
-}
-
-std::string Remote::recvline() {
-    return this->recvuntil("\n");
 }
 
 size_t Remote::send(const std::string &data) {
     if(this->debug) {std::cout << "(Send)\n"; hexdump(data); }
     return send_wrapper(sock->sock,data.c_str(),data.size(),0);
-}
-
-size_t Remote::sendafter(const std::string &rcv, const std::string &data) {
-    this->recvuntil(rcv);
-    return this->send(data);
-}
-
-size_t Remote::sendlineafter(const std::string &rcv, const std::string &data) {
-    return this->sendafter(rcv, data+"\n");
-}
-
-void Remote::interactive() {
-    std::cout.setf(std::ios::unitbuf);
-    std::cin.setf(std::ios::unitbuf);
-
-    std::thread t1(&Remote::recvloop, this);
-    usleep(1500);
-
-    std::string inp;
-    while(true) {
-        std::cout << "$ ";
-        getline(std::cin ,inp);
-        if(this->debug) {std::cout << "(Send)\n"; hexdump(inp); }
-        this->sendline(inp);
-        usleep(250000);
-    }
 }
 
 void Remote::shutdown(const std::string& h) {

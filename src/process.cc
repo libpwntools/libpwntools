@@ -41,10 +41,6 @@ Process::Process(const std::string &path) {
     this->debug = false;
 }
 
-void Process::set_debug(bool mode) {
-    this->debug = mode;
-}
-
 void Process::gdb_attach() {
     std::string _pid = std::to_string(this->pid);
     std::string cmd = "gnome-terminal -- gdb --pid="+_pid;
@@ -65,57 +61,8 @@ size_t Process::send(const std::string &buf) {
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
-void Process::recvloop() {
-    std::string s;
-    while(true) {
-        s = this->recv(1024);
-        write(1, s.c_str(), s.length());
-        s.clear();
-    }
-}
-
-size_t Process::sendline(const std::string &buf) {
-    return this->send(buf + "\n");
-}
-
-std::string Process::recvuntil(const std::string &buf) {
-    std::string s;
-    while (!ends_with(s, buf))
-        s += this->recv(1);
-    if(this->debug) {std::cout << "Recv: \n"; hexdump(buf);}
-    return s;
-}
-
-std::string Process::recvline() {
-    return this->recvuntil("\n");
-}
-
-void Process::interactive() {
-    std::cout.setf(std::ios::unitbuf);
-    std::cin.setf(std::ios::unitbuf);
-
-    std::thread t1(&Process::recvloop, this);
-    usleep(1500);
-
-    std::string inp;
-    while(true) {
-        std::cout << "$ ";
-        getline(std::cin, inp);
-        this->sendline(inp);
-        usleep(10000);
-    }
-}
-
 void Process::_close() {
     kill(this->pid,SIGKILL);
     close(this->_stdin);
     close(this->_stdout);
-}
-
-size_t Process::sendafter(const std::string &rcv, const std::string &data) {
-    this->recvuntil(rcv);
-    return this->send(rcv);
-}
-size_t Process::sendlineafter(const std::string &rcv, const std::string &data) {
-    return this->sendafter(rcv,data+"\n");
 }
