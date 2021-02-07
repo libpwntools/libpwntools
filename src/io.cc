@@ -25,7 +25,7 @@ void IO::set_debug(bool mode) {
 std::string IO::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
-        s += this->recv(1);
+        s += this->recv_buffered(1);
     if(this->debug) { std::cout << "(Recv)\n"; hexdump(s) ;}
     return s;
 }
@@ -51,7 +51,7 @@ std::string IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
-        buf += recv(len);
+        buf += recv_buffered(len);
         size_left = len - buf.length();
     }
     return buf;
