@@ -34,8 +34,8 @@ Process::Process(const std::string &path) {
         exit(0);
     }
 
-    close(inpipefd[1]);
-    close(outpipefd[0]);
+    ::close(inpipefd[1]);
+    ::close(outpipefd[0]);
     this->_stdin = outpipefd[1];
     this->_stdout = inpipefd[0];
     this->debug = false;
@@ -61,8 +61,8 @@ size_t Process::send(const std::string &buf) {
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
-void Process::_close() {
+void Process::close() {
     kill(this->pid,SIGKILL);
-    close(this->_stdin);
-    close(this->_stdout);
+    ::close(this->_stdin);
+    ::close(this->_stdout);
 }

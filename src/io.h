@@ -6,6 +6,7 @@
 class IO {
     public:
         IO();
+        ~IO();
         size_t virtual send(const std::string&);
         std::string virtual recv(size_t);
         void interactive();
@@ -15,6 +16,7 @@ class IO {
         size_t sendlineafter(const std::string&, const std::string&);
         size_t sendafter(const std::string&, const std::string&);
         void set_debug(bool);
+        void virtual close();
     protected:
         bool debug;
         void recvloop();

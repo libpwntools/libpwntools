@@ -8,7 +8,7 @@ class Process : public IO {
         size_t send(const std::string&);
         std::string recv(size_t len);
         void gdb_attach();
-        void _close();
+        void close();
     private:
         int pid;
         int _stdin;

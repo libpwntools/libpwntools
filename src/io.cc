@@ -5,6 +5,9 @@
 #include <thread>
 
 IO::IO() {};
+IO::~IO() {
+    this->close();
+};
 
 void IO::recvloop() {
     std::string s;
@@ -55,6 +58,12 @@ size_t IO::send(const std::string&) { // dummy
     exit(0);
     return 0;
 }
+
+void IO::close() { // dummy
+    std::cout << "This should never be called\n";
+    exit(0);
+}
+
 
 void IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
