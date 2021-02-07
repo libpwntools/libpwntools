@@ -9,6 +9,7 @@ class IO {
         ~IO();
         size_t virtual send(const std::string&);
         std::string virtual recv(size_t);
+        std::string recv_buffered(size_t);
         void interactive();
         size_t sendline(const std::string&);
         std::string recvuntil(const std::string&);
@@ -21,5 +22,6 @@ class IO {
     protected:
         bool debug;
         void recvloop();
+        std::string buffer;
 };
 #endif

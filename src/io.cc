@@ -57,6 +57,37 @@ std::string IO::recvn(size_t len) {
     return buf;
 };
 
+std::string IO::recv_buffered(size_t len) { // experimental
+    size_t buffer_length = this->buffer.length();
+    if(len >= 1024 && !buffer_length)
+        return this->recv(len);
+
+    if(buffer_length >= len) {
+        std::string tmp = this->buffer.substr(0, len);
+        if(buffer_length > len)
+            this->buffer = this->buffer.substr(len, buffer_length-len);
+        else
+            this->buffer.clear();
+        return tmp;
+    }
+
+    if(buffer_length) {
+        this->buffer += this->recv(len-buffer_length);
+        std::string tmp = this->buffer;
+        this->buffer.clear();
+        return tmp;
+    }
+
+    this->buffer = this->recv(1024);
+    buffer_length = this->buffer.length();
+    std::string tmp = this->buffer.substr(0, std::min(buffer_length, len));
+    if(tmp.length() == buffer_length)
+        this->buffer.clear();
+    else
+        this->buffer = this->buffer.substr(len, buffer_length-len);
+    return tmp;
+}
+
 std::string IO::recv(size_t len) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
