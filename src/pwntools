@@ -107,18 +107,6 @@ namespace pack {
         pack::flat_raw(buf, std::forward<Ts>(args)...);
         return buf;
     }
-
-		std::string flat(std::vector<uint32_t> &chain) {
-			std::string s;
-			for(int i = 0; i < chain.size(); i++) { s += pack::p32(chain.at(i));  }
-			return s;
-		}
-
-		std::string flat(std::vector<uint64_t> &chain) {
-			std::string s;
-			for(int i = 0; i < chain.size(); i++) { s += pack::p64(chain.at(i)); }
-			return s;
-		}
 };
 
 class file {
@@ -207,24 +195,17 @@ class SigReturnFrame {
 		}
 		std::string construct_frame() {
 			if (this->kernel == "amd64") {
-				std::vector<uint64_t> a;
-				a = {
-					this->uc_flags,this->uc,this->uc_stack_ss_sp,this->uc_stack_ss_flags,this->uc_stack_ss_size,
-					this->r8,this->r9,this->r10,this->r11,this->r12,this->r13,this->r14,this->r15,this->rdi,
-					this->rsi,this->rbp,this->rbx,this->rdx,this->rax,this->rcx,this->rsp,this->rip,this->eflags_64,
-					this->csgsfs,this->err_32,this->trapno_64, this->oldmask_64, this->cr2_64, this->fpstate_64,
-					this->reserved, this->sigmask
-			};
-			return pack::flat(a);
+				return pack::flat(this->uc_flags,this->uc,this->uc_stack_ss_sp,this->uc_stack_ss_flags,this->uc_stack_ss_size,
+				this->r8,this->r9,this->r10,this->r11,this->r12,this->r13,this->r14,this->r15,this->rdi,
+				this->rsi,this->rbp,this->rbx,this->rdx,this->rax,this->rcx,this->rsp,this->rip,this->eflags_64,
+				this->csgsfs,this->err_32,this->trapno_64, this->oldmask_64, this->cr2_64, this->fpstate_64,
+				this->reserved, this->sigmask);
+			
 			}
 			else if (this->arch == "i386") {
-				std::vector<uint32_t> b;
-				b = {
-					this->gs_32, this->fs_32, this->es_32, this->ds_32, this->edi_32, this->esi_32,
-					this->ebp_32, this->esp_32, this->ebx_32, this->edx_32, this->ecx_32, this->eax_32, this->trapno_32,
-					this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32
-				};
-				return pack::flat(b);
+				return pack::flat(this->gs_32, this->fs_32, this->es_32, this->ds_32, this->edi_32, this->esi_32,
+				this->ebp_32, this->esp_32, this->ebx_32, this->edx_32, this->ecx_32, this->eax_32, this->trapno_32,
+				this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32);
 			}
 			else {
 				std::cout << "Supported archs (amd64 / i386). " << std::endl;
