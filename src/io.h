@@ -22,6 +22,7 @@ class IO {
     protected:
         bool debug;
         void recvloop();
+    private:
         std::string buffer;
 };
 #endif
