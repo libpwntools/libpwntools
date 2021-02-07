@@ -11,11 +11,11 @@ IO::~IO() {
 
 void IO::recvloop() {
     std::string s;
-    while(true) {
-        s = this->recv(1024);
-        write(1, s.c_str(), s.length());
-        s.clear();
-    }
+    std::cout << this->buffer;
+    this->buffer.clear();
+
+    while(true)
+        std::cout << this->recv(1024);
 }
 
 void IO::set_debug(bool mode) {
@@ -65,7 +65,7 @@ std::string IO::recv_buffered(size_t len) { // experimental
     if(buffer_length >= len) {
         std::string tmp = this->buffer.substr(0, len);
         if(buffer_length > len)
-            this->buffer = this->buffer.substr(len, buffer_length-len);
+            this->buffer = this->buffer.substr(len);
         else
             this->buffer.clear();
         return tmp;
@@ -84,7 +84,7 @@ std::string IO::recv_buffered(size_t len) { // experimental
     if(tmp.length() == buffer_length)
         this->buffer.clear();
     else
-        this->buffer = this->buffer.substr(len, buffer_length-len);
+        this->buffer = this->buffer.substr(len);
     return tmp;
 }
 
