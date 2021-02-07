@@ -13,6 +13,7 @@ class IO {
         size_t sendline(const std::string&);
         std::string recvuntil(const std::string&);
         std::string recvline();
+        std::string recvn(size_t);
         size_t sendlineafter(const std::string&, const std::string&);
         size_t sendafter(const std::string&, const std::string&);
         void set_debug(bool);

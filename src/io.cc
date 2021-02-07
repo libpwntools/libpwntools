@@ -47,6 +47,16 @@ size_t IO::sendlineafter(const std::string &rcv, const std::string &data) {
     return this->sendafter(rcv, data+"\n");
 }
 
+std::string IO::recvn(size_t len) {
+    std::string buf;
+    size_t size_left = len;
+    while (buf.length() != len) {
+        buf += recv(len);
+        size_left = len - buf.length();
+    }
+    return buf;
+};
+
 std::string IO::recv(size_t len) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
