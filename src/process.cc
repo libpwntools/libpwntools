@@ -12,6 +12,11 @@
 #include <libpwntools/utils.h>
 
 Process::Process() {}
+
+Process::~Process() {
+    this->close();
+}
+
 Process::Process(const std::string &path) {
     int inpipefd[2];
     int outpipefd[2];

@@ -6,7 +6,8 @@
 
 IO::IO() {};
 IO::~IO() {
-    this->close();
+    std::cout << this->buffer;
+    this->buffer.clear();
 };
 
 void IO::recvloop() {

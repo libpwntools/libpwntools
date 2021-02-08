@@ -12,6 +12,10 @@ size_t recv_wrapper(int fd, char * buf, size_t len, int z) {
 
 Remote::Remote() {}
 
+Remote::~Remote() {
+    this->close();
+}
+
 Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
     this->port = std::to_string(port_number);

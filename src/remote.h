@@ -13,9 +13,10 @@ class Remote : public IO {
   std::vector<Socket> reads;
  public:
   Remote();
+  ~Remote();
   Remote(const std::string&, uint32_t);
   std::string recv_raw(size_t);
   size_t send(const std::string&);
   void shutdown(const std::string& );
-	void close();
+  void close();
 };
