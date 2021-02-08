@@ -15,7 +15,7 @@ void IO::recvloop() {
     this->buffer.clear();
 
     while(true)
-        std::cout << this->recv(1024);
+        std::cout << this->recv_raw(1024);
 }
 
 void IO::set_debug(bool mode) {
@@ -25,7 +25,7 @@ void IO::set_debug(bool mode) {
 std::string IO::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
-        s += this->recv_buffered(1);
+        s += this->recv(1);
     if(this->debug) { std::cout << "(Recv)\n"; hexdump(s) ;}
     return s;
 }
@@ -51,16 +51,16 @@ std::string IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
-        buf += recv_buffered(size_left);
+        buf += recv(size_left);
         size_left = len - buf.length();
     }
     return buf;
 };
 
-std::string IO::recv_buffered(size_t len) { // experimental
+std::string IO::recv(size_t len) { // experimental
     size_t buffer_length = this->buffer.length();
     if(len >= 1024 && !buffer_length)
-        return this->recv(len);
+        return this->recv_raw(len);
 
     if(buffer_length >= len) {
         std::string tmp = this->buffer.substr(0, len);
@@ -72,13 +72,13 @@ std::string IO::recv_buffered(size_t len) { // experimental
     }
 
     if(buffer_length) {
-        this->buffer += this->recv(len-buffer_length);
+        this->buffer += this->recv_raw(len-buffer_length);
         std::string tmp = this->buffer;
         this->buffer.clear();
         return tmp;
     }
 
-    this->buffer = this->recv(1024);
+    this->buffer = this->recv_raw(1024);
     buffer_length = this->buffer.length();
     std::string tmp = this->buffer.substr(0, std::min(buffer_length, len));
     if(tmp.length() == buffer_length)
@@ -88,7 +88,7 @@ std::string IO::recv_buffered(size_t len) { // experimental
     return tmp;
 }
 
-std::string IO::recv(size_t len) { // dummy
+std::string IO::recv_raw(size_t len) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
     return "";

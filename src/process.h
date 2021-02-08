@@ -6,7 +6,7 @@ class Process : public IO {
         Process();
         Process(const std::string&);
         size_t send(const std::string&);
-        std::string recv(size_t len);
+        std::string recv_raw(size_t len);
         void gdb_attach();
         void close();
     private:

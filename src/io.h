@@ -8,8 +8,8 @@ class IO {
         IO();
         ~IO();
         size_t virtual send(const std::string&);
-        std::string virtual recv(size_t);
-        std::string recv_buffered(size_t);
+        std::string virtual recv_raw(size_t);
+        std::string recv(size_t);
         void interactive();
         size_t sendline(const std::string&);
         std::string recvuntil(const std::string&);

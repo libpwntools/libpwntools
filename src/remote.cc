@@ -26,7 +26,7 @@ Remote::Remote(const std::string &ip, uint32_t port_number) {
     reads.push_back(*this->sock);
 }
 
-std::string Remote::recv(size_t len) {
+std::string Remote::recv_raw(size_t len) {
 	char * buf = (char *)malloc(len);
 	len = recv_wrapper(sock->sock, buf, len, 0);
 	std::string s(buf, len);

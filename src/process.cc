@@ -47,7 +47,7 @@ void Process::gdb_attach() {
     system(cmd.c_str());
 }
 
-std::string Process::recv(size_t len) {
+std::string Process::recv_raw(size_t len) {
     char* buf = new char[len + 1];
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);

@@ -14,7 +14,7 @@ class Remote : public IO {
  public:
   Remote();
   Remote(const std::string&, uint32_t);
-  std::string recv(size_t);
+  std::string recv_raw(size_t);
   size_t send(const std::string&);
   void shutdown(const std::string& );
 	void close();
