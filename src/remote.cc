@@ -19,50 +19,71 @@ Remote::~Remote() {
 Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
     this->port = std::to_string(port_number);
-    this->sock = new Socket(AF_INET,SOCK_STREAM,0);
-    this->debug = false;
-    if(!this->sock) {
-        std::cerr << "Connection Failed " << std::endl;
+
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port_number);
+
+    hostent * record = gethostbyname(ip.c_str());
+	if(record == NULL) {
+		std::cerr << ip << " is unavailable\n";
+		exit(-1);
+	}
+
+	serv_addr.sin_addr = *(in_addr *)record->h_addr;
+    if((this->fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        std::cerr << "Error while creating socket\n";
         exit(-1);
     }
 
-    sock->connect(this->host, this->port);
-    reads.push_back(*this->sock);
+    if (connect(this->fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        std::cerr << "Connection failed\n";
+        exit(-1);
+    }
+
+    this->debug = false;
 }
 
 std::string Remote::recv_raw(size_t len) {
 	char * buf = (char *)malloc(len);
-	len = recv_wrapper(sock->sock, buf, len, 0);
+	len = recv_wrapper(this->fd, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
-    if(this->debug && len > 1) {std::cout << "(Recv)\n"; hexdump(s) ;}
+
+    if(this->debug && len > 1) {
+        std::cout << "(Recv)\n";
+        hexdump(s);
+    }
+
 	return s;
 }
 
 size_t Remote::send(const std::string &data) {
-    if(this->debug) {std::cout << "(Send)\n"; hexdump(data); }
-    return send_wrapper(sock->sock,data.c_str(),data.size(),0);
+    if(this->debug) {
+        std::cout << "(Send)\n";
+        hexdump(data);
+    }
+    return send_wrapper(this->fd, data.c_str(), data.size(), 0);
 }
 
 void Remote::shutdown(const std::string& h) {
-		int how {0};
-    if(h == "send") {
+		int how;
+
+        if(h == "send") {
 			how = SHUT_WR;
-		}
-		else if (h == "recv") {
+		} else if (h == "recv") {
 			how = SHUT_RD;
-		}
-		else {
+		} else {
 			std::cout << "Only send / recv allowed: " << std::endl;
 			exit(1);
 		}
-		if (::shutdown(sock->sock,how) < 0) {
+
+		if (::shutdown(this->fd, how) < 0) {
 			std::cout << "Shutdown err" << std::endl;
 			exit(1);
 		}
-		return ;
 }
 
 void Remote::close() {
-	::close(sock->sock);
+	::close(this->fd);
 }
