@@ -51,7 +51,7 @@ std::string IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
-        buf += recv_buffered(len);
+        buf += recv_buffered(size_left);
         size_left = len - buf.length();
     }
     return buf;
