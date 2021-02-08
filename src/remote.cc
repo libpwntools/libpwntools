@@ -67,21 +67,21 @@ size_t Remote::send(const std::string &data) {
 }
 
 void Remote::shutdown(const std::string& h) {
-		int how;
+    int how;
 
-        if(h == "send") {
-			how = SHUT_WR;
-		} else if (h == "recv") {
-			how = SHUT_RD;
-		} else {
-			std::cout << "Only send / recv allowed: " << std::endl;
-			exit(1);
-		}
+    if(h == "send") {
+        how = SHUT_WR;
+    } else if (h == "recv") {
+        how = SHUT_RD;
+    } else {
+        std::cout << "Only send / recv allowed: " << std::endl;
+        exit(1);
+    }
 
-		if (::shutdown(this->fd, how) < 0) {
-			std::cout << "Shutdown err" << std::endl;
-			exit(1);
-		}
+    if (::shutdown(this->fd, how) < 0) {
+        std::cout << "Shutdown err" << std::endl;
+        exit(1);
+    }
 }
 
 void Remote::close() {
