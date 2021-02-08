@@ -16,7 +16,7 @@
 #define AMD64 64
 #define I386 86
 
-namespace pwnlib{
+namespace pwnlib {
     void pause() {
         std::cout << "(pause) Press enter to release." << std::endl;
         getchar();
@@ -123,12 +123,11 @@ class file {
 		}
 
 		~file() {
-			delete this->fp ;
+			delete this->fp;
 		}
 };
 
 class SigReturnFrame {
-
 	public:
 		std::string arch;
 		std::string kernel = "amd64"; // assuming default
@@ -193,6 +192,7 @@ class SigReturnFrame {
 				this->ss_32 = 0x7b;
 			}
 		}
+
 		std::string construct_frame() {
 			if (this->kernel == "amd64") {
 				return pack::flat(this->uc_flags,this->uc,this->uc_stack_ss_sp,this->uc_stack_ss_flags,this->uc_stack_ss_size,
@@ -202,17 +202,18 @@ class SigReturnFrame {
 				this->reserved, this->sigmask);
 			
 			}
+
 			else if (this->arch == "i386") {
 				return pack::flat(this->gs_32, this->fs_32, this->es_32, this->ds_32, this->edi_32, this->esi_32,
 				this->ebp_32, this->esp_32, this->ebx_32, this->edx_32, this->ecx_32, this->eax_32, this->trapno_32,
 				this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32);
 			}
+
 			else {
 				std::cout << "Supported archs (amd64 / i386). " << std::endl;
 				exit(0);
 			}
 		}
-
 };
 
 #endif
