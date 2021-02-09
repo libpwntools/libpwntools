@@ -67,5 +67,7 @@ std::string fmtstr_payload::build() {
     for(auto iter : this->list)
         payload += std::string((char *)&iter.first, 8);
 
+    this->list.clear();
+    this->writes.clear();
     return payload;
 }
