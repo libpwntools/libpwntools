@@ -6,10 +6,22 @@ bool sortcmp(const std::pair<int,int> &a, const std::pair<int,int> &b) {
     return (a.second < b.second);
 }
 
+fmtstr_payload::fmtstr_payload() {
+    this->offset = 6;
+    this->padding = 0;
+    this->set_bytes_written(0);
+}
+
 fmtstr_payload::fmtstr_payload(uint32_t offset) {
     this->offset = offset;
     this->padding = 0;
     this->set_bytes_written(0);
+}
+
+fmtstr_payload::fmtstr_payload(uint32_t offset, uint32_t written) {
+    this->offset = offset;
+    this->padding = 0;
+    this->set_bytes_written(written);
 }
 
 void fmtstr_payload::do_write(uint64_t addr, uint64_t value) {
@@ -25,7 +37,14 @@ void fmtstr_payload::set_bytes_written(size_t n) {
         this->padding = 8 - (n % 8);
 }
 
+uint64_t &fmtstr_payload::operator[](uint64_t addr) {
+    return this->writes[addr];
+}
+
 std::string fmtstr_payload::build() {
+    for(auto x : this->writes)
+        this->do_write(x.first, x.second);
+
     std::string payload;
     uint64_t written = this->bytes_written + this->padding;
     uint64_t payload_size = this->list.size() * 12;
