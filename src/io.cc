@@ -3,6 +3,7 @@
 #include <libpwntools/utils.h>
 #include <iostream>
 #include <thread>
+#include <libpwntools/logger.h>
 
 IO::IO() {};
 IO::~IO() {
@@ -111,7 +112,7 @@ void IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
-    std::cout << "[+] Switching to interactive mode" << std::endl;
+    logger::success("Switching to interactive mode");
     std::thread t1(&IO::recvloop, this);
     usleep(1500);
 
