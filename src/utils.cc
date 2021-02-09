@@ -151,3 +151,19 @@ std::string Hex(uint64_t n) {
     std::string res = "0x" + ss.str();
     return res;
 }
+
+uint64_t Int(const std::string &n, uint8_t base) {
+    if(base < 2 || base > 36) {
+        std::cerr << "Invalid base\n";
+        exit(1);
+    }
+
+    char * p;
+    uint64_t val = strtoul(n.c_str(), &p, base);
+    if(*p) {
+        std::cerr << "Not a number\n";
+        exit(1);
+    }
+
+    return val;
+}
