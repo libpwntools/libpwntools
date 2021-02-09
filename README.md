@@ -1,7 +1,7 @@
 # libpwntools
 
 ## Todo
-- [ ] Complete fmstr_payload implementation
+- [x] Complete fmstr_payload implementation
 - [ ] asm and disasm 
 - [ ] shellcraft like shellcode gen
 - [ ] implement ret2dlresolve
