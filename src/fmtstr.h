@@ -9,6 +9,7 @@
 class fmtstr_payload {
     public:
         fmtstr_payload();
+        ~fmtstr_payload();
         fmtstr_payload(uint32_t);
         fmtstr_payload(uint32_t, uint32_t);
         void do_write(uint64_t, uint64_t); 

@@ -75,3 +75,8 @@ std::string fmtstr_payload::build() {
     this->writes.clear();
     return payload;
 }
+
+fmtstr_payload::~fmtstr_payload() {
+    this->list.clear();
+    this->writes.clear();
+}
