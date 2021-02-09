@@ -49,12 +49,6 @@ std::string Remote::recv_raw(size_t len) {
 	len = recv_wrapper(this->fd, buf, len, 0);
 	std::string s(buf, len);
 	free(buf);
-
-    if(this->debug && len > 1) {
-        std::cout << "(Recv)\n";
-        hexdump(s);
-    }
-
 	return s;
 }
 

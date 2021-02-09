@@ -28,10 +28,6 @@ std::string IO::recvuntil(const std::string &buf) {
     std::string s;
     while (!ends_with(s, buf))
         s += this->recv(1);
-    if(this->debug) {
-        std::cout << "(Recv)\n";
-        hexdump(s);
-    }
     return s;
 }
 
@@ -64,32 +60,41 @@ std::string IO::recvn(size_t len) {
 
 std::string IO::recv(size_t len) { // experimental
     size_t buffer_length = this->buffer.length();
-    if(len >= 1024 && !buffer_length)
-        return this->recv_raw(len);
+    std::string tmp;
+    if(len >= 1024 && !buffer_length) {
+        tmp = this->recv_raw(len);
+        goto ret;
+    }
 
     if(buffer_length >= len) {
-        std::string tmp = this->buffer.substr(0, len);
+        tmp = this->buffer.substr(0, len);
         if(buffer_length > len)
             this->buffer = this->buffer.substr(len);
         else
             this->buffer.clear();
-        return tmp;
+        goto ret;
     }
 
     if(buffer_length) {
         this->buffer += this->recv_raw(len-buffer_length);
-        std::string tmp = this->buffer;
+        tmp = this->buffer;
         this->buffer.clear();
-        return tmp;
+        goto ret;
     }
 
     this->buffer = this->recv_raw(1024);
     buffer_length = this->buffer.length();
-    std::string tmp = this->buffer.substr(0, std::min(buffer_length, len));
+    tmp = this->buffer.substr(0, std::min(buffer_length, len));
     if(tmp.length() == buffer_length)
         this->buffer.clear();
     else
         this->buffer = this->buffer.substr(len);
+
+    ret:
+    if(this->debug) {
+        std::cout << "(Recv)\n";
+        hexdump(tmp);
+    }
     return tmp;
 }
 
@@ -123,10 +128,6 @@ void IO::interactive() {
     while(true) {
         std::cout << "$ ";
         getline(std::cin ,inp);
-        if(this->debug) {
-            std::cout << "(Send)\n";
-            hexdump(inp);
-        }
         this->sendline(inp);
         usleep(250000);
     }

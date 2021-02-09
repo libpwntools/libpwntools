@@ -57,12 +57,14 @@ std::string Process::recv_raw(size_t len) {
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
     delete buf;
-    if(this->debug && len > 1) {std::cout << "Recv: \n"; hexdump(s);}
     return s;
 }
 
 size_t Process::send(const std::string &buf) {
-    if(this->debug) {std::cout << "Send: \n"; hexdump(buf);}
+    if(this->debug) {
+        std::cout << "Send: \n";
+        hexdump(buf);
+    }
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
