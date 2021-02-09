@@ -111,6 +111,7 @@ void IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
+    std::cout << "[+] Switching to interactive mode" << std::endl;
     std::thread t1(&IO::recvloop, this);
     usleep(1500);
 
