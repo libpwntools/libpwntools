@@ -3,7 +3,6 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
-#include <iostream>
 
 #ifndef FMTSTR_H
 #define FMTSTR_H
