@@ -24,9 +24,13 @@ fmtstr_payload::fmtstr_payload(uint32_t offset, uint32_t written) {
     this->set_bytes_written(written);
 }
 
+void fmtstr_payload::do_single_write(uint64_t addr, uint8_t value) {
+    this->list.push_back({addr, value});
+}
+
 void fmtstr_payload::do_write(uint64_t addr, uint64_t value) {
     for(int i=0; i < 8; ++i) {
-        this->list.push_back({addr + i, value & 0xff});
+        this->do_single_write(addr + i, value & 0xff);
         value >>= 8;
     }
 }
