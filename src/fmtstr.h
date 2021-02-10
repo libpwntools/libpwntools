@@ -24,5 +24,6 @@ class fmtstr_payload {
         size_t padding;
         std::unordered_map<uint64_t, uint64_t> writes;
         std::vector<std::pair<uint64_t, uint64_t>> list;
+        uint64_t get_write_size();
 };
 #endif
