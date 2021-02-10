@@ -3,6 +3,8 @@
 #include <cassert>
 #include <stdexcept>
 
+#ifndef UTILS_H
+#define UTILS_H
 bool ends_with(const std::string&, const std::string&);
 std::string str_repeat(const std::string&, size_t);
 std::string str_xor(const std::string&, const std::string&);
@@ -14,3 +16,4 @@ std::string hex_to_string(const std::string&);
 std::string remove_newline(std::string&);
 std::string Hex(uint64_t);
 uint64_t Int(const std::string&, uint8_t);
+#endif
