@@ -2,10 +2,6 @@
 #include <libpwntools/utils.h>
 #include <iostream>
 
-bool sortcmp(const std::pair<int,int> &a, const std::pair<int,int> &b) {
-    return (a.second < b.second);
-}
-
 fmtstr_payload::fmtstr_payload() {
     this->offset = 6;
     this->padding = 0;
@@ -70,7 +66,12 @@ std::string fmtstr_payload::build() {
     for(auto x : this->writes)
         this->do_write(x.first, x.second);
  
-    std::sort(this->list.begin(), this->list.end(), sortcmp);
+    std::sort(this->list.begin(), this->list.end(),
+        [](const std::pair<int,int> &a, const std::pair<int,int> &b) -> bool
+        {
+            return a.second < b.second;
+        });
+
     std::string payload;
     uint64_t written = this->bytes_written + this->padding;
 
