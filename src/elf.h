@@ -3,8 +3,6 @@
 #include <cassert>
 #include <unistd.h>
 
-#ifndef ELF_H
-#define ELF_H
 class ELF {
     public:
         ELF(const std::string&);
@@ -12,4 +10,3 @@ class ELF {
     private:
         std::string file;
 };
-#endif

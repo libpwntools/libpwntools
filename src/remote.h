@@ -12,8 +12,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#ifndef REMOTE_H
-#define REMOTE_H
 class Remote : public IO {
     private:
         std::string host;
@@ -28,4 +26,3 @@ class Remote : public IO {
         void shutdown(const std::string& );
         void close();
 };
-#endif
