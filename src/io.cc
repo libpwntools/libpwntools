@@ -5,41 +5,41 @@
 #include <thread>
 #include <libpwntools/logger.h>
 
-IO::IO() {};
-IO::~IO() {
+pwn::IO::IO() {};
+pwn::IO::~IO() {
     std::cout << this->buffer;
     this->buffer.clear();
 };
 
-void IO::set_debug(bool mode) {
+void pwn::IO::set_debug(bool mode) {
     this->debug = mode;
 }
 
-std::string IO::recvuntil(const std::string &buf) {
+std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
-    while (!ends_with(s, buf))
+    while (!pwn::ends_with(s, buf))
         s += this->recv(1);
     return s;
 }
 
-size_t IO::sendline(const std::string &buf) {
+size_t pwn::IO::sendline(const std::string &buf) {
     return this->send(buf + "\n");
 }
 
-std::string IO::recvline() {
+std::string pwn::IO::recvline() {
     return this->recvuntil("\n");
 }
 
-size_t IO::sendafter(const std::string &rcv, const std::string &data) {
+size_t pwn::IO::sendafter(const std::string &rcv, const std::string &data) {
     this->recvuntil(rcv);
     return this->send(data);
 }
 
-size_t IO::sendlineafter(const std::string &rcv, const std::string &data) {
+size_t pwn::IO::sendlineafter(const std::string &rcv, const std::string &data) {
     return this->sendafter(rcv, data+"\n");
 }
 
-std::string IO::recvn(size_t len) {
+std::string pwn::IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
@@ -49,7 +49,7 @@ std::string IO::recvn(size_t len) {
     return buf;
 };
 
-std::string IO::recv(size_t len) { // experimental
+std::string pwn::IO::recv(size_t len) { // experimental
     size_t buffer_length = this->buffer.length();
     std::string tmp;
     if(len >= 1024 && !buffer_length) {
@@ -84,34 +84,34 @@ std::string IO::recv(size_t len) { // experimental
     ret:
     if(this->debug) {
         std::cout << "(Recv)\n";
-        hexdump(tmp);
+        pwn::hexdump(tmp);
     }
     return tmp;
 }
 
-std::string IO::recv_raw(size_t len) { // dummy
+std::string pwn::IO::recv_raw(size_t len) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
     return "";
 }
 
-size_t IO::send(const std::string&) { // dummy
+size_t pwn::IO::send(const std::string&) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
     return 0;
 }
 
-void IO::close() { // dummy
+void pwn::IO::close() { // dummy
     std::cout << "This should never be called\n";
     exit(0);
 }
 
 
-void IO::interactive() {
+void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
-    logger::success("Switching to interactive mode");
+    pwn::log::success("Switching to interactive mode");
     std::thread t1(
     [&]() -> void {
         std::string s;

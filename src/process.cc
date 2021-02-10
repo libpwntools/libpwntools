@@ -11,13 +11,13 @@
 #include <libpwntools/process.h>
 #include <libpwntools/utils.h>
 
-Process::Process() {}
+pwn::Process::Process() {}
 
-Process::~Process() {
+pwn::Process::~Process() {
     this->close();
 }
 
-Process::Process(const std::string &path) {
+pwn::Process::Process(const std::string &path) {
     int inpipefd[2];
     int outpipefd[2];
 
@@ -46,13 +46,13 @@ Process::Process(const std::string &path) {
     this->debug = false;
 }
 
-void Process::gdb_attach() {
+void pwn::Process::gdb_attach() {
     std::string _pid = std::to_string(this->pid);
     std::string cmd = "gnome-terminal -- gdb --pid="+_pid;
     system(cmd.c_str());
 }
 
-std::string Process::recv_raw(size_t len) {
+std::string pwn::Process::recv_raw(size_t len) {
     char* buf = (char *)malloc(len);
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
@@ -60,15 +60,15 @@ std::string Process::recv_raw(size_t len) {
     return s;
 }
 
-size_t Process::send(const std::string &buf) {
+size_t pwn::Process::send(const std::string &buf) {
     if(this->debug) {
         std::cout << "Send: \n";
-        hexdump(buf);
+        pwn::hexdump(buf);
     }
     return write(this->_stdin, buf.c_str(), buf.length());
 }
 
-void Process::close() {
+void pwn::Process::close() {
     kill(this->pid,SIGKILL);
     ::close(this->_stdin);
     ::close(this->_stdout);

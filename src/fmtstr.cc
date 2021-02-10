@@ -1,47 +1,48 @@
+#include <pwntools>
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/utils.h>
 #include <iostream>
 
-fmtstr_payload::fmtstr_payload() {
+pwn::fmtstr_payload::fmtstr_payload() {
     this->offset = 6;
     this->padding = 0;
     this->set_bytes_written(0);
 }
 
-fmtstr_payload::fmtstr_payload(uint32_t offset) {
+pwn::fmtstr_payload::fmtstr_payload(uint32_t offset) {
     this->offset = offset;
     this->padding = 0;
     this->set_bytes_written(0);
 }
 
-fmtstr_payload::fmtstr_payload(uint32_t offset, uint32_t written) {
+pwn::fmtstr_payload::fmtstr_payload(uint32_t offset, uint32_t written) {
     this->offset = offset;
     this->padding = 0;
     this->set_bytes_written(written);
 }
 
-void fmtstr_payload::do_single_write(uint64_t addr, uint8_t value) {
+void pwn::fmtstr_payload::do_single_write(uint64_t addr, uint8_t value) {
     this->list.push_back({addr, value});
 }
 
-void fmtstr_payload::do_write(uint64_t addr, uint64_t value) {
+void pwn::fmtstr_payload::do_write(uint64_t addr, uint64_t value) {
     for(int i=0; i < 8; ++i) {
         this->do_single_write(addr + i, value & 0xff);
         value >>= 8;
     }
 }
 
-void fmtstr_payload::set_bytes_written(size_t n) {
+void pwn::fmtstr_payload::set_bytes_written(size_t n) {
     this->bytes_written = n;
     if(n)
         this->padding = 8 - (n % 8);
 }
 
-uint64_t &fmtstr_payload::operator[](uint64_t addr) {
+uint64_t &pwn::fmtstr_payload::operator[](uint64_t addr) {
     return this->writes[addr];
 }
 
-uint64_t fmtstr_payload::get_write_size() {
+uint64_t pwn::fmtstr_payload::get_write_size() {
     size_t payload_size = 0;
     uint64_t written = this->bytes_written + this->padding;
     for(auto iter : this->list) {
@@ -62,7 +63,7 @@ uint64_t fmtstr_payload::get_write_size() {
     return payload_size;
 }
 
-std::string fmtstr_payload::build() {
+std::string pwn::fmtstr_payload::build() {
     for(auto x : this->writes)
         this->do_write(x.first, x.second);
  
@@ -91,14 +92,14 @@ std::string fmtstr_payload::build() {
 
     payload += std::string(payload_size-payload.length(), '|');
     for(auto iter : this->list)
-        payload += std::string((char *)&iter.first, 8);
+        payload += pwn::p64(iter.first);
 
     this->list.clear();
     this->writes.clear();
     return payload;
 }
 
-fmtstr_payload::~fmtstr_payload() {
+pwn::fmtstr_payload::~fmtstr_payload() {
     this->list.clear();
     this->writes.clear();
 }

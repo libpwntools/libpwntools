@@ -10,13 +10,13 @@ size_t recv_wrapper(int fd, char * buf, size_t len, int z) {
     return recv(fd, buf, len, z);
 }
 
-Remote::Remote() {}
+pwn::Remote::Remote() {}
 
-Remote::~Remote() {
+pwn::Remote::~Remote() {
     this->close();
 }
 
-Remote::Remote(const std::string &ip, uint32_t port_number) {
+pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
     this->port = std::to_string(port_number);
 
@@ -44,7 +44,7 @@ Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->debug = false;
 }
 
-std::string Remote::recv_raw(size_t len) {
+std::string pwn::Remote::recv_raw(size_t len) {
 	char * buf = (char *)malloc(len);
 	len = recv_wrapper(this->fd, buf, len, 0);
 	std::string s(buf, len);
@@ -52,15 +52,15 @@ std::string Remote::recv_raw(size_t len) {
 	return s;
 }
 
-size_t Remote::send(const std::string &data) {
+size_t pwn::Remote::send(const std::string &data) {
     if(this->debug) {
         std::cout << "(Send)\n";
-        hexdump(data);
+        pwn::hexdump(data);
     }
     return send_wrapper(this->fd, data.c_str(), data.size(), 0);
 }
 
-void Remote::shutdown(const std::string& h) {
+void pwn::Remote::shutdown(const std::string& h) {
     int how;
 
     if(h == "send") {
@@ -78,6 +78,6 @@ void Remote::shutdown(const std::string& h) {
     }
 }
 
-void Remote::close() {
+void pwn::Remote::close() {
 	::close(this->fd);
 }

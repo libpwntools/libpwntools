@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-ELF::ELF(const std::string &filename) {
+pwn::ELF::ELF(const std::string &filename) {
     int fd = open(filename.c_str(), O_RDONLY);
     assert(fd > 0);
 
@@ -19,7 +19,7 @@ ELF::ELF(const std::string &filename) {
     close(fd);
 }
 
-int64_t ELF::find_str_offset(const std::string &str) {
+int64_t pwn::ELF::find_str_offset(const std::string &str) {
     int64_t idx = this->file.find(str);
     if(idx == std::string::npos) return -1;
     return idx;

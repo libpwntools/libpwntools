@@ -14,18 +14,20 @@
 
 #ifndef REMOTE_H
 #define REMOTE_H
-class Remote : public IO {
-    private:
-        std::string host;
-        std::string port;
-        int fd;
-    public:
-        Remote();
-        ~Remote();
-        Remote(const std::string&, uint32_t);
-        std::string recv_raw(size_t);
-        size_t send(const std::string&);
-        void shutdown(const std::string& );
-        void close();
-};
+namespace pwn {
+    class Remote : public pwn::IO {
+        private:
+            std::string host;
+            std::string port;
+            int fd;
+        public:
+            Remote();
+            ~Remote();
+            Remote(const std::string&, uint32_t);
+            std::string recv_raw(size_t);
+            size_t send(const std::string&);
+            void shutdown(const std::string& );
+            void close();
+    };
+}
 #endif
