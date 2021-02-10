@@ -21,7 +21,6 @@ class IO {
         void virtual close();
     protected:
         bool debug;
-        void recvloop();
     private:
         std::string buffer;
 };

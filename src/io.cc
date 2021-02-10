@@ -11,15 +11,6 @@ IO::~IO() {
     this->buffer.clear();
 };
 
-void IO::recvloop() {
-    std::string s;
-    std::cout << this->buffer;
-    this->buffer.clear();
-
-    while(true)
-        std::cout << this->recv_raw(1024);
-}
-
 void IO::set_debug(bool mode) {
     this->debug = mode;
 }
@@ -121,9 +112,17 @@ void IO::interactive() {
     std::cin.setf(std::ios::unitbuf);
 
     logger::success("Switching to interactive mode");
-    std::thread t1(&IO::recvloop, this);
-    usleep(1500);
+    std::thread t1(
+    [&]() -> void {
+        std::string s;
+        std::cout << this->buffer;
+        this->buffer.clear();
 
+        while(true)
+            std::cout << this->recv_raw(1024);
+    });
+
+    usleep(1500);
     std::string inp;
     while(true) {
         std::cout << "$ ";
