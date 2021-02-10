@@ -1,6 +1,8 @@
 #pragma once
 #include <libpwntools/io.h>
 
+#ifndef PROCESS_H
+#define PROCESS_H
 class Process : public IO {
     public:
         Process();
@@ -15,3 +17,4 @@ class Process : public IO {
         int _stdin;
         int _stdout;
 };
+#endif
