@@ -28,5 +28,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Test build
         run: |
+          make && make install
           cd src && make && make static
           exit $?
