@@ -1,6 +1,8 @@
 #include <pwntools>
+#include <functional>
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/utils.h>
+#include <libpwntools/logger.h>
 #include <iostream>
 
 pwn::fmtstr_payload::fmtstr_payload() {
@@ -61,6 +63,25 @@ uint64_t pwn::fmtstr_payload::get_write_size() {
         written += write_size;
     }
     return payload_size;
+}
+
+int64_t pwn::fmtstr_payload::find_offset(std::function<std::string(const std::string&)> func) {
+    std::string egg = pwn::random_string(8);
+    std::string egg_hex = pwn::Hex(pwn::u64(egg));
+    std::string res;
+
+    for(int i=1; i<0x1000; ++i) {
+        res = func(egg+"%"+std::to_string(i)+"$p");
+        if(res.find(egg) == std::string::npos)
+            break;
+        if(res.find(egg_hex) != std::string::npos) {
+            this->offset = i;
+            return i;
+        }
+    }
+
+    pwn::log::failure("Could not find format string offset");
+    return -1;
 }
 
 std::string pwn::fmtstr_payload::build() {

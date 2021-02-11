@@ -16,6 +16,7 @@ namespace pwn {
             void do_write(uint64_t, uint64_t); 
             void do_single_write(uint64_t, uint8_t); 
             void set_bytes_written(size_t);
+            int64_t find_offset(std::function<std::string(const std::string&)>);
             std::string build();
             uint64_t &operator[] (uint64_t addr);
 
