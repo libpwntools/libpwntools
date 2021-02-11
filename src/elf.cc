@@ -16,12 +16,24 @@ pwn::ELF::ELF(const std::string &filename) {
     stat(filename.c_str(), &st);
     unsigned char * tmp = (unsigned char *)malloc(st.st_size);
     read(fd, tmp, st.st_size);
+    close(fd);
+
     this->file = std::string((const char *)tmp, st.st_size);
     free(tmp);
-
     Elf64_Ehdr *elf_header = (Elf64_Ehdr *)this->file.c_str();
     assert(elf_header->e_ident[EI_CLASS] == ELFCLASS64);
-    close(fd);
+
+    std::vector<pwn::symbol> syms = this->parse_symbols();
+    for(pwn::symbol sym : syms) {
+        std::string sym_name = sym.symbol_name;
+        uint64_t sym_value = sym.symbol_value;
+        if(sym_name.length() && sym_value)
+            this->sym_map[sym_name] = sym_value;
+    }
+}
+
+uint64_t &pwn::ELF::operator[](const std::string &sym_name) {
+    return this->sym_map[sym_name];
 }
 
 std::vector<pwn::section> pwn::ELF::parse_sections() {
@@ -35,7 +47,7 @@ std::vector<pwn::section> pwn::ELF::parse_sections() {
 
     std::vector<pwn::section> vect;
     for(int i=0; i<shnum; ++i) {
-        section s;
+        pwn::section s;
         s.section_name = std::string((char *)(&sh_strtab_p[section_header[i].sh_name]));
         s.section_type = section_header[i].sh_type;
         s.section_offset = section_header[i].sh_offset;
@@ -44,6 +56,51 @@ std::vector<pwn::section> pwn::ELF::parse_sections() {
         s.section_entsize = section_header[i].sh_entsize;
         s.section_addr_align = section_header[i].sh_addralign;
         vect.push_back(s);
+    }
+    return vect;
+}
+
+std::vector<pwn::symbol> pwn::ELF::parse_symbols() {
+    uint8_t * raw = (uint8_t *)this->file.c_str();
+    std::vector<pwn::section> sections = this->parse_sections();
+    std::vector<pwn::symbol> vect;
+
+    uint8_t *sh_strtab_p = nullptr;
+    for(pwn::section sec: sections) {
+        if((sec.section_type == SHT_STRTAB) && (sec.section_name == ".strtab")){
+            sh_strtab_p = &raw[sec.section_offset];
+            break;
+        }
+    }
+
+    uint8_t *sh_dynstr_p = nullptr;
+    for(pwn::section sec: sections) {
+        if((sec.section_type == SHT_SYMTAB) && (sec.section_name == ".dynstr")){
+            sh_dynstr_p = &raw[sec.section_offset];
+            break;
+        }
+    }
+
+    for(pwn::section sec : sections) {
+        if((sec.section_type != SHT_SYMTAB) && (sec.section_type != SHT_DYNSYM))
+            continue;
+        size_t nsyms = sec.section_size / sizeof(Elf64_Sym);
+        Elf64_Sym * syms_data = (Elf64_Sym *)&raw[sec.section_offset];
+
+        for(int i=0; i<nsyms; ++i) {
+            pwn::symbol s;
+            s.symbol_value = syms_data[i].st_value;
+            s.symbol_size = syms_data[i].st_size;
+            s.symbol_type = syms_data[i].st_info;
+            s.symbol_section = sec.section_name;
+            
+            if(sec.section_type == SHT_SYMTAB)
+                s.symbol_name = std::string((char *)&sh_strtab_p[syms_data[i].st_name]);
+            if(sec.section_type == SHT_DYNSYM)
+                s.symbol_name = std::string((char *)&sh_strtab_p[syms_data[i].st_name]);
+            
+            vect.push_back(s);
+        }
     }
     return vect;
 }

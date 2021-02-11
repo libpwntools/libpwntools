@@ -3,10 +3,19 @@
 #include <cassert>
 #include <unistd.h>
 #include <vector>
+#include <unordered_map>
 
 #ifndef ELF_H
 #define ELF_H
 namespace pwn {
+    typedef struct {
+        std::string symbol_name;
+        std::string symbol_section;
+        uint64_t symbol_value;
+        uint64_t symbol_size;
+        uint64_t symbol_type;
+    } symbol;
+
     typedef struct {
         std::string section_name;
         uint64_t section_type;
@@ -22,8 +31,11 @@ namespace pwn {
             ELF(const std::string&);
             int64_t find_str_offset(const std::string&);
             std::vector<section> parse_sections();
+            std::vector<symbol> parse_symbols();
+            uint64_t &operator[] (const std::string&);
         private:
             std::string file;
+            std::unordered_map<std::string, uint64_t> sym_map;
     };
 }
 #endif
