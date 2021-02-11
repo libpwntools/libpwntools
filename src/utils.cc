@@ -2,6 +2,7 @@
 #include <libpwntools/utils.h>
 #include <ostream>
 #include <bits/stdc++.h> 
+#include <random>
 
 bool pwn::ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
@@ -166,4 +167,15 @@ uint64_t pwn::Int(const std::string &n, uint8_t base) {
     }
 
     return val;
+}
+
+std::string pwn::random_string(size_t len) {
+    constexpr std::string_view charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string s;
+    constexpr size_t charset_length = charset.length();
+    srand(time(nullptr));
+
+    for(int i=0; i<len; ++i)
+        s += charset[rand() % charset_length];
+    return s;
 }
