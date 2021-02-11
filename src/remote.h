@@ -24,10 +24,10 @@ namespace pwn {
             Remote();
             ~Remote();
             Remote(const std::string&, uint32_t);
-            std::string recv_raw(size_t);
-            size_t send(const std::string&);
+            virtual std::string recv_raw(size_t) override;
+            virtual size_t send(const std::string&) override;
             void shutdown(const std::string& );
-            void close();
+            virtual void close() override;
     };
 }
 #endif

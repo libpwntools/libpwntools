@@ -9,10 +9,10 @@ namespace pwn {
             Process();
             ~Process();
             Process(const std::string&);
-            size_t send(const std::string&);
-            std::string recv_raw(size_t len);
+            virtual size_t send(const std::string&) override;
+            virtual std::string recv_raw(size_t len) override;
             void gdb_attach();
-            void close();
+            virtual void close() override;
         private:
             int pid;
             int _stdin;
