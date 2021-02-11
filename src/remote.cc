@@ -25,7 +25,7 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     serv_addr.sin_port = htons(port_number);
 
     hostent * record = gethostbyname(ip.c_str());
-	if(record == NULL) {
+	if(record == nullptr) {
 		std::cerr << ip << " is unavailable\n";
 		exit(-1);
 	}

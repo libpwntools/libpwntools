@@ -33,7 +33,7 @@ pwn::Process::Process(const std::string &path) {
         std::vector<char*> av;
         prctl(PR_SET_PDEATHSIG, SIGTERM);
         av.push_back((char *)path.c_str());
-        av.push_back(NULL);
+        av.push_back(nullptr);
 
         execv(path.c_str(), &av[0]);
         exit(0);
