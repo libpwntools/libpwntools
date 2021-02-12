@@ -1,7 +1,7 @@
 build:
-	cp src/main.cc src/.main.tmp
+	mv src/main.cc src/.main.tmp
 	g++ src/*.cc -o bin/libpwntools.so -pthread -shared -fPIC -g -std=c++17 -I`pwd`/src/
-	cp src/.main.tmp src/main.cc
+	mv src/.main.tmp src/main.cc
 exploit:
 	g++ -o exploit -pthread -std=c++17 exploit.cc -lpwntools
 install:
