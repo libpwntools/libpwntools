@@ -1,4 +1,9 @@
+#ifdef __linux__
 #include <unistd.h>
+#elif _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
 #include <libpwntools/io.h>
 #include <libpwntools/utils.h>
 #include <iostream>
@@ -43,7 +48,11 @@ std::string pwn::IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
+#ifdef __linux__
         buf += this->recv(size_left);
+#elif _WIN32
+        buf += this->recvn(size_left);
+#endif
         size_left = len - buf.length();
     }
     return buf;
@@ -76,6 +85,7 @@ std::string pwn::IO::recv(size_t len) { // experimental
     this->buffer = this->recv_raw(1024);
     buffer_length = this->buffer.length();
     tmp = this->buffer.substr(0, std::min(buffer_length, len));
+
     if(tmp.length() == buffer_length)
         this->buffer.clear();
     else
@@ -121,13 +131,20 @@ void pwn::IO::interactive() {
         while(true)
             std::cout << this->recv_raw(1024);
     });
-
+#ifdef __linux__
     usleep(1500);
+#elif _WIN32
+    Sleep(50);
+#endif
     std::string inp;
     while(true) {
         std::cout << "$ ";
         getline(std::cin ,inp);
         this->sendline(inp);
+#ifdef __linux__
         usleep(250000);
+#elif _WIN32
+        Sleep(150);
+#endif
     }
 }
