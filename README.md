@@ -6,7 +6,7 @@
 - [ ] shellcraft like shellcode gen
 - [ ] implement ret2dlresolve
 - [ ] basic PE/ELF analysis stuff
-- [ ] proper installation setup
+- [x] proper installation setup
 - [ ] rework gdb
 - [ ] cyclic pattern gen
 - [x] socket implementation for remote from scratch
