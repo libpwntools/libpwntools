@@ -27,10 +27,10 @@ namespace pwn {
             std::string host;
             std::string port;
 #ifdef __linux__
-            int ConnectSocket{ 0 };
+            int fd;
 #elif _WIN32
             WSADATA wsaData;
-            SOCKET ConnectSocket = INVALID_SOCKET;
+            SOCKET fd;
 #endif
         public:
             Remote();
@@ -39,7 +39,7 @@ namespace pwn {
             virtual std::string recv_raw(size_t) override;
             virtual size_t send(const std::string&) override;
 #ifdef __linux__
-            void shutdown(const std::string& );
+            void shutdown(const std::string&);
 #endif
             virtual void close() override;
     };
