@@ -75,7 +75,7 @@ std::vector<pwn::symbol> pwn::ELF::parse_symbols() {
 
     uint8_t *sh_dynstr_p = nullptr;
     for(pwn::section sec: sections) {
-        if((sec.section_type == SHT_SYMTAB) && (sec.section_name == ".dynstr")){
+        if((sec.section_type == SHT_STRTAB) && (sec.section_name == ".dynstr")){
             sh_dynstr_p = &raw[sec.section_offset];
             break;
         }
@@ -97,7 +97,7 @@ std::vector<pwn::symbol> pwn::ELF::parse_symbols() {
             if(sec.section_type == SHT_SYMTAB)
                 s.symbol_name = std::string((char *)&sh_strtab_p[syms_data[i].st_name]);
             if(sec.section_type == SHT_DYNSYM)
-                s.symbol_name = std::string((char *)&sh_strtab_p[syms_data[i].st_name]);
+                s.symbol_name = std::string((char *)&sh_dynstr_p[syms_data[i].st_name]);
             
             vect.push_back(s);
         }
