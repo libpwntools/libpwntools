@@ -10,6 +10,6 @@
 - [ ] rework gdb
 - [ ] cyclic pattern gen
 - [x] socket implementation for remote from scratch
-- [ ] windows process interaction support
+- [x] windows process interaction support
 - [ ] libc db
 - [ ] improve IO::interactive
