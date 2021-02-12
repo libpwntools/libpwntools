@@ -51,6 +51,7 @@ uint32_t pwn::u32(const std::string &buf) {
     return *(uint32_t *)buf.c_str();
 }
 
+#ifdef __linux__
 pwn::file::file() {
 	this->fp = new FILE;
 	std::memset((void *)fp, 0, sizeof(FILE) );
@@ -63,6 +64,7 @@ std::string pwn::file::construct() {
 pwn::file::~file() {
 	delete this->fp;
 }
+#endif
 
 pwn::SigReturnFrame::SigReturnFrame(std::string kern, std::string file_arch) {
     this->gs_32 = 0;
