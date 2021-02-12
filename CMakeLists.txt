@@ -11,7 +11,7 @@ if(UNIX)
         include_directories(include src/)
 
         add_library(pwntools SHARED ${SOURCES})
-        install(TARGETS pwntools DESTINATION lib/)
+        install(TARGETS pwntools DESTINATION /lib/)
 
         file(GLOB HEADERS include/*.h src/*.h)
         install(FILES ${HEADERS} DESTINATION include/libpwntools/)

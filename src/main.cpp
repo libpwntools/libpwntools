@@ -3,6 +3,5 @@
 using namespace pwn;
 
 int main(void) {
-    ELF e("/tmp/fmt");
-    std::cout << Hex(e["main"]) << '\n';
+    hexdump(flat(1, 2, 3L, -4, "test"));
 }
