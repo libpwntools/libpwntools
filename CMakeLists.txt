@@ -8,12 +8,14 @@ if(UNIX)
         set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 
         file(GLOB SOURCES src/*.cc)
-        include_directories(include)
+        include_directories(include src/)
 
         add_library(pwntools SHARED ${SOURCES})
+        install(TARGETS pwntools DESTINATION lib/)
 
-        install(TARGETS pwntools DESTINATION lib/pwntools)
+        file(GLOB HEADERS include/*.h src/*.h)
+        install(FILES ${HEADERS} DESTINATION include/libpwntools/)
 
-        file(GLOB HEADERS include/*.h)
-        install(FILES ${HEADERS} DESTINATION include/${PROJECT_NAME})
+        file(GLOB HEADERS include/*.h src/pwntools)
+        install(FILES ${HEADERS} DESTINATION include/)
 endif()
