@@ -1,8 +1,14 @@
+#include <iostream>
 #include <string>
 #include <libpwntools/utils.h>
+#ifdef __linux__
 #include <ostream>
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
+#elif _WIN32
+#include <sstream>
+#endif
 #include <random>
+
 
 bool pwn::ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
