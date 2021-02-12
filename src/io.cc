@@ -48,11 +48,7 @@ std::string pwn::IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
-#ifdef __linux__
         buf += this->recv(size_left);
-#elif _WIN32
-        buf += this->recvn(size_left);
-#endif
         size_left = len - buf.length();
     }
     return buf;
