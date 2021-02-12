@@ -1,5 +1,5 @@
 #include <iostream>
-#include <libpwntools/elf.h>
+#include <libpwntools/pwnelf.h>
 #include <libpwntools/utils.h>
 #include <elf.h>
 #include <sys/types.h>

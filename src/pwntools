@@ -137,7 +137,7 @@ namespace pwn {
     };
 };
 
-#include <libpwntools/elf.h>
+#include <libpwntools/pwnelf.h>
 #include <libpwntools/process.h>
 #include <libpwntools/remote.h>
 #include <libpwntools/utils.h>
