@@ -24,14 +24,10 @@ pwn::Process::Process(const std::string& path) {
 #ifdef __linux__
     int inpipefd[2];
     int outpipefd[2];
-    if (pipe(inpipefd) < 0) {
-        std::cout << "[+] Error Pipe" << std::endl;
-        exit(1);
-    }
-    if (pipe(outpipefd) < 0) {
-        std::cout << "[+] Error Pipe" << std::endl;
-        exit(1);
-    }
+
+    pipe(inpipefd);
+    pipe(outpipefd);
+
     this->pid = fork();
     if(!this->pid) {
         dup2(outpipefd[0], 0);
@@ -41,7 +37,7 @@ pwn::Process::Process(const std::string& path) {
         std::vector<char*> av;
         prctl(PR_SET_PDEATHSIG, SIGTERM);
         av.push_back((char *)path.c_str());
-        av.push_back(NULL);
+        av.push_back(nullptr);
 
         execv(path.c_str(), &av[0]);
         exit(0);
@@ -51,29 +47,28 @@ pwn::Process::Process(const std::string& path) {
     ::close(outpipefd[0]);
     this->_stdin = outpipefd[1];
     this->_stdout = inpipefd[0];
-    
 #elif _WIN32
     this->saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
     this->saAttr.bInheritHandle = true;
-    this->saAttr.lpSecurityDescriptor = NULL;
+    this->saAttr.lpSecurityDescriptor = nullptr;
 
     if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr, &this->saAttr, 0)) {
-        std::cout << "[+] Error Creating Pipe" << std::endl;
+        pwn::log::error("Error Creating Pipe");
         exit(-1);
     }
 
     if (!SetHandleInformation(this->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) {
-        std::cout << "[+] Error	SetHandle" << std::endl;
+        pwn::log::error("Error SetHandle");
         exit(-1);
     }
 
     if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr, 0)) {
-        std::cout << "[+] Error Createing Pipe" << std::endl;
+        pwn::log::error("Error Createing Pipe");
         exit(-1);
     }
 
     if (!SetHandleInformation(this->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) {
-        std::cout << "[+] Error SetHandle" << std::endl;
+        pwn::log::error("Error SetHandle");
         exit(-1);
     }
 
@@ -97,25 +92,24 @@ void pwn::Process::debugger_attach() {
 }
 
 std::string pwn::Process::recv_raw(size_t len) {
-    char* buff = new char[len + 1];
+    char* buf = (char *)malloc(len);
 #ifdef __linux__
-    len = read(this->_stdout, buff, len);
-    std::string return_buf(buff, len);
-    delete[] buff;
+    len = read(this->_stdout, buf, len);
+    std::string s(buf, len);
 #elif _WIN32
     DWORD dwRead;
     BOOL bSuccess = FALSE;
-    bSuccess = ReadFile(this->g_hChildStd_OUT_Rd, buff, len, &dwRead, NULL);
+    bSuccess = ReadFile(this->g_hChildStd_OUT_Rd, buf, len, &dwRead, nullptr);
     if (!bSuccess) {
-        std::cout << "[+] Error reading" << std::endl;
+        pwn::log::error("Error reading");
         exit(-1);
     }
-    std::string return_buf(buff, dwRead);
-    delete[] buff;    
+    std::string s(buf, dwRead);
 #else
+    free(buf);
     exit(0);
 #endif
-    return return_buf;
+    return s;
 }
 
 size_t pwn::Process::send(const std::string &buf) {
@@ -129,12 +123,7 @@ size_t pwn::Process::send(const std::string &buf) {
     DWORD dwWritten;
     BOOL bSuccess;
 
-    bSuccess = WriteFile(this->g_hChildStd_IN_Wr, buf.c_str(), buf.size(), &dwWritten, NULL);
-    if (!bSuccess) {
-        std::cout << "[+] Error Writing" << std::endl;
-        exit(-1);
-    }
-    return (size_t) dwWritten;
+    return WriteFile(this->g_hChildStd_IN_Wr, buf.c_str(), buf.size(), &dwWritten, nullptr);
 #endif
 }
 
@@ -163,19 +152,19 @@ void pwn::Process::createProcess(const char* progname) {
     siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     LPSTR szCmdline = const_cast<LPSTR>(progname);
-    bSuccess = CreateProcess(NULL,
+    bSuccess = CreateProcess(nullptr,
         szCmdline,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         TRUE,
         0,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         &siStartInfo,
         &piProcInfo);
 
     if (!bSuccess) {
-        std::cout << "[+] Error creating process" << std::endl;
+        pwn::log::error("Error creating process");
         exit(-1);
     }
     else {
@@ -185,7 +174,7 @@ void pwn::Process::createProcess(const char* progname) {
         CloseHandle(g_hChildStd_OUT_Wr);
         CloseHandle(g_hChildStd_IN_Rd);
         this->pid = piProcInfo.dwProcessId;
-        std::cout << "[+] Process created: " << this->pid << std::endl;
+        pwn::log::error("Process created: " + std::to_string(this->pid));
     }
 }
 #endif
