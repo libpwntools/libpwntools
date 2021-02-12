@@ -111,7 +111,7 @@ void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
-    pwn::log::success("Switching to interactive mode");
+    pwn::log::info("Switching to interactive mode");
     std::thread t1(
     [&]() -> void {
         std::string s;
