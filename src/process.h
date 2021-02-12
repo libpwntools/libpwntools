@@ -15,8 +15,8 @@ namespace pwn {
             Process();
             ~Process();
             Process(const std::string&);
-            virtual size_t send(const std::string&) override ;
-            virtual std::string recv_raw(size_t len) override ;
+            virtual size_t send(const std::string&) override;
+            virtual std::string recv_raw(size_t len) override;
             void debugger_attach();
             virtual void close() override;
         private:
