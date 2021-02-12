@@ -1,14 +1,20 @@
 #include <string>
-#include <libpwntools/utils.h>
+#include "utils.h"
+#ifdef __linux__
 #include <ostream>
-#include <bits/stdc++.h> 
+#include <bits/stdc++.h>
+#elif _WIN32
+#include <sstream>
+#endif
+#include <iostream>
 
-bool ends_with(const std::string& a, const std::string& b) {
+
+bool pwn::ends_with(const std::string& a, const std::string& b) {
     if (b.size() > a.size()) return false;
     return std::equal(a.begin() + a.size() - b.size(), a.end(), b.begin());
 }
 
-void hexdump_wrap(void *pAddressIn, size_t  lSize) {
+void pwn::hexdump_wrap(void *pAddressIn, unsigned long  lSize) {
     char szBuf[100];
     long lIndent = 1;
     long lOutLen, lIndex, lIndex2, lOutLen2;
@@ -26,16 +32,19 @@ void hexdump_wrap(void *pAddressIn, size_t  lSize) {
 
         if(lOutLen > 16)
             lOutLen = 16;
-
+#ifdef __linux__
         sprintf(szBuf, " >                            "
+            "                      "
+            "    %08lX", (unsigned long)(pTmp - pAddress));
+#elif _WIN32
+        sprintf_s(szBuf, " >                            "
                      "                      "
-                     "    %08lX", pTmp-pAddress);
+                     "    %08lX", (unsigned long)(pTmp-pAddress) );
+#endif
         lOutLen2 = lOutLen;
-
         for(lIndex = 1+lIndent, lIndex2 = 53-15+lIndent, lRelPos = 0; lOutLen2; lOutLen2--, lIndex += 2, lIndex2++) {
             ucTmp = *pTmp++;
-            sprintf(szBuf + lIndex, "%02X ", (unsigned short)ucTmp);
-
+            sprintf(szBuf + lIndex, "%02X " , (unsigned short)ucTmp);
             if(!isprint(ucTmp))
                 ucTmp = '.';
 
@@ -58,17 +67,17 @@ void hexdump_wrap(void *pAddressIn, size_t  lSize) {
     }
 }
 
-void hexdump(std::string s) {
-	hexdump_wrap((void *)s.c_str(),s.size());
+void pwn::hexdump(std::string s) {
+	pwn::hexdump_wrap((void *)s.c_str(),(unsigned long)s.size());
 }
 
-std::string str_repeat(const std::string &str, size_t n) {
+std::string pwn::str_repeat(const std::string &str, size_t n) {
     std::string s;
     for(int i=0;i<n;++i) s += str;
     return s;
 }
 
-std::string str_xor(const std::string &a, const std::string &b) {
+std::string pwn::str_xor(const std::string &a, const std::string &b) {
     std::string c;
     size_t len_a = a.length();
     size_t len_b = b.length();
@@ -86,7 +95,7 @@ std::string str_xor(const std::string &a, const std::string &b) {
     return c;
 }
 
-std::string string_to_hex(const std::string& input) {
+std::string pwn::string_to_hex(const std::string& input) {
     static const char hex_digits[] = "0123456789ABCDEF";
 
     std::string output;
@@ -99,7 +108,7 @@ std::string string_to_hex(const std::string& input) {
     return output;
 }
 
-int hex_value(unsigned char hex_digit) {
+int pwn::hex_value(unsigned char hex_digit) {
     static const signed char hex_values[256] = {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -123,7 +132,7 @@ int hex_value(unsigned char hex_digit) {
     return value;
 }
 
-std::string hex_to_string(const std::string& input) {
+std::string pwn::hex_to_string(const std::string& input) {
     const auto len = input.length();
     if (len & 1) throw std::invalid_argument("odd length");
 
@@ -131,28 +140,28 @@ std::string hex_to_string(const std::string& input) {
     output.reserve(len / 2);
     for (auto it = input.begin(); it != input.end(); )
     {
-        int hi = hex_value(*it++);
-        int lo = hex_value(*it++);
+        int hi = pwn::hex_value(*it++);
+        int lo = pwn::hex_value(*it++);
         output.push_back(hi << 4 | lo);
     }
     return output;
 }
 
-std::string remove_newline(std::string &s) {
-    int pos;
+std::string pwn::remove_newline(std::string &s) {
+    size_t pos;
     if((pos=s.find('\n')) != std::string::npos)
         s.erase(pos);
     return s;
 }
 
-std::string Hex(uint64_t n) {
+std::string pwn::Hex(uint64_t n) {
     std::stringstream ss;
     ss << std::hex << n;
     std::string res = "0x" + ss.str();
     return res;
 }
 
-uint64_t Int(const std::string &n, uint8_t base) {
+uint64_t pwn::Int(const std::string &n, uint8_t base) {
     if(base < 2 || base > 36) {
         std::cerr << "Invalid base\n";
         exit(1);

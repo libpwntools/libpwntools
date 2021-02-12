@@ -1,64 +1,64 @@
+#ifdef __linux__
 #include <unistd.h>
-#include <libpwntools/io.h>
-#include <libpwntools/utils.h>
+#elif _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
+#include "io.h"
+#include "utils.h"
 #include <iostream>
 #include <thread>
-#include <libpwntools/logger.h>
+#include "logger.h"
 
-IO::IO() {};
-IO::~IO() {
+pwn::IO::IO() { };
+pwn::IO::~IO() {
     std::cout << this->buffer;
     this->buffer.clear();
 };
 
-void IO::recvloop() {
-    std::string s;
-    std::cout << this->buffer;
-    this->buffer.clear();
-
-    while(true)
-        std::cout << this->recv_raw(1024);
-}
-
-void IO::set_debug(bool mode) {
+void pwn::IO::set_debug(bool mode) {
     this->debug = mode;
 }
 
-std::string IO::recvuntil(const std::string &buf) {
+std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
-    while (!ends_with(s, buf))
+    while (!pwn::ends_with(s, buf))
         s += this->recv(1);
     return s;
 }
 
-size_t IO::sendline(const std::string &buf) {
+size_t pwn::IO::sendline(const std::string &buf) {
     return this->send(buf + "\n");
 }
 
-std::string IO::recvline() {
+std::string pwn::IO::recvline() {
     return this->recvuntil("\n");
 }
 
-size_t IO::sendafter(const std::string &rcv, const std::string &data) {
+size_t pwn::IO::sendafter(const std::string &rcv, const std::string &data) {
     this->recvuntil(rcv);
     return this->send(data);
 }
 
-size_t IO::sendlineafter(const std::string &rcv, const std::string &data) {
+size_t pwn::IO::sendlineafter(const std::string &rcv, const std::string &data) {
     return this->sendafter(rcv, data+"\n");
 }
 
-std::string IO::recvn(size_t len) {
+std::string pwn::IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
+#ifdef __linux__       
         buf += this->recv(size_left);
+#elif _WIN32
+        buf += this->recvn(size_left);
+#endif
         size_left = len - buf.length();
     }
     return buf;
 };
 
-std::string IO::recv(size_t len) { // experimental
+std::string pwn::IO::recv(size_t len) { // experimental
     size_t buffer_length = this->buffer.length();
     std::string tmp;
     if(len >= 1024 && !buffer_length) {
@@ -85,6 +85,7 @@ std::string IO::recv(size_t len) { // experimental
     this->buffer = this->recv_raw(1024);
     buffer_length = this->buffer.length();
     tmp = this->buffer.substr(0, std::min(buffer_length, len));
+
     if(tmp.length() == buffer_length)
         this->buffer.clear();
     else
@@ -93,42 +94,57 @@ std::string IO::recv(size_t len) { // experimental
     ret:
     if(this->debug) {
         std::cout << "(Recv)\n";
-        hexdump(tmp);
+        pwn::hexdump(tmp);
     }
     return tmp;
 }
 
-std::string IO::recv_raw(size_t len) { // dummy
+std::string pwn::IO::recv_raw(size_t len) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
     return "";
 }
 
-size_t IO::send(const std::string&) { // dummy
+size_t pwn::IO::send(const std::string&) { // dummy
     std::cout << "This should never be called\n";
     exit(0);
     return 0;
 }
 
-void IO::close() { // dummy
+void pwn::IO::close() { // dummy
     std::cout << "This should never be called\n";
     exit(0);
 }
 
 
-void IO::interactive() {
+void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
-    logger::success("Switching to interactive mode");
-    std::thread t1(&IO::recvloop, this);
-    usleep(1500);
+    pwn::log::success("Switching to interactive mode");
+    std::thread t1(
+    [&]() -> void {
+        std::string s;
+        std::cout << this->buffer;
+        this->buffer.clear();
 
+        while(true)
+            std::cout << this->recv_raw(1024);
+    });
+#ifdef __linux__
+    usleep(1500);
+#elif _WIN32
+    Sleep(50);
+#endif
     std::string inp;
     while(true) {
         std::cout << "$ ";
         getline(std::cin ,inp);
         this->sendline(inp);
+#ifdef __linux__
         usleep(250000);
+#elif _WIN32
+        Sleep(150);
+#endif
     }
 }
