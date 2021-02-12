@@ -25,5 +25,5 @@ namespace pwn {
         private:
             std::string buffer;
     };
-};
+}
 #endif

@@ -10,7 +10,7 @@
 #include <thread>
 #include <libpwntools/logger.h>
 
-pwn::IO::IO() { };
+pwn::IO::IO() {};
 pwn::IO::~IO() {
     std::cout << this->buffer;
     this->buffer.clear();
@@ -48,7 +48,7 @@ std::string pwn::IO::recvn(size_t len) {
     std::string buf;
     size_t size_left = len;
     while (buf.length() != len) {
-#ifdef __linux__       
+#ifdef __linux__
         buf += this->recv(size_left);
 #elif _WIN32
         buf += this->recvn(size_left);
@@ -121,7 +121,7 @@ void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
-    pwn::log::success("Switching to interactive mode");
+    pwn::log::info("Switching to interactive mode");
     std::thread t1(
     [&]() -> void {
         std::string s;
