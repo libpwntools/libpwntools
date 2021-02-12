@@ -1,4 +1,4 @@
-#include "pwntools.h"
+#include <pwntools.h>
 
 void pwn::pause() {
     std::cout << "(pause) Press enter to release." << std::endl;

@@ -141,9 +141,9 @@ namespace pwn {
 #include <libpwntools/fmtstr.h>
 */
 
-#include "process.h"
-#include "remote.h"
-#include "utils.h"
-#include "logger.h"
-#include "fmtstr.h"
+#include <libpwntools/process.h>
+#include <libpwntools/remote.h>
+#include <libpwntools/utils.h>
+#include <libpwntools/logger.h>
+#include <libpwntools/fmtstr.h>
 #endif

@@ -11,8 +11,8 @@
 #endif
 #include <thread>
 #include <signal.h>
-#include "process.h"
-#include "utils.h"
+#include <libpwntools/process.h>
+#include <libpwntools/utils.h>
 
 pwn::Process::Process() {}
 

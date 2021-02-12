@@ -6,7 +6,14 @@ cmake_minimum_required (VERSION 3.8)
 set(CMAKE_CXX_STANDARD 20)
 if(UNIX)
 	set(CMAKE_EXE_LINKER_FLAGS "-pthread")
+	file(GLOB SOURCES src/*.cc)
+	include_directories(include src/)
+	add_library(pwntools SHARED ${SOURCES})
+	install(TARGETS pwntools DESTINATION /lib/)
+
+	file(GLOB HEADERS src/*.h)
+	install(FILES ${HEADERS} DESTINATION include/libpwntools/)
+
+	file(GLOB H src/pwntools.h)
+	install(FILES ${H} DESTINATION include/)
 endif()
-# Add source to this project's executable. #oops
-add_executable (ayy "main.cc" "pwntools.cc" "pwntools.h" "logger.cc" "logger.h" "utils.cc" "utils.h" "fmtstr.cc" "fmtstr.h" "io.cc" "io.h" "process.cc" "process.h" "remote.cc" "remote.h")
-# TODO: Add tests and install targets if needed.

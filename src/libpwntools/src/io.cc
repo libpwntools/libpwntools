@@ -4,11 +4,11 @@
 #define NOMINMAX
 #include <windows.h>
 #endif
-#include "io.h"
-#include "utils.h"
+#include <libpwntools/io.h>
+#include <libpwntools/utils.h>
 #include <iostream>
 #include <thread>
-#include "logger.h"
+#include <libpwntools/logger.h>
 
 pwn::IO::IO() { };
 pwn::IO::~IO() {

@@ -3,9 +3,9 @@
 #include <string>
 #include <stdlib.h>
 #include <stdio.h>
-#include "remote.h"
-#include "io.h"
-#include "utils.h"
+#include <libpwntools/remote.h>
+#include <libpwntools/io.h>
+#include <libpwntools/utils.h>
 #ifdef __linux__
 #include <netdb.h>
 #include <sys/param.h>

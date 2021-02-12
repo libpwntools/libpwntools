@@ -1,6 +1,6 @@
-#include "pwntools.h"
-#include "fmtstr.h"
-#include "utils.h"
+#include <pwntools.h>
+#include <libpwntools/fmtstr.h>
+#include <libpwntools/utils.h>
 #include <iostream>
 
 pwn::fmtstr_payload::fmtstr_payload() {
