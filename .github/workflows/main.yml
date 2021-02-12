@@ -29,5 +29,7 @@ jobs:
       - name: Test build
         run: |
           mkdir build && cd build && cmake .. && make && sudo make install
-          cd ../src && make && make static
-          exit $?
+          cd ../src && make
+          /tmp/main
+          make static
+          /tmp/main
