@@ -8,7 +8,7 @@
 #define FMTSTR_H
 namespace pwn {
     class fmtstr_payload {
-       public:
+      public:
         fmtstr_payload();
         ~fmtstr_payload();
         fmtstr_payload(uint32_t);
@@ -20,7 +20,7 @@ namespace pwn {
         std::string build();
         uint64_t &operator[](uint64_t addr);
 
-       private:
+      private:
         uint32_t offset;
         size_t bytes_written;
         size_t padding;
@@ -28,5 +28,5 @@ namespace pwn {
         std::vector<std::pair<uint64_t, uint64_t>> list;
         uint64_t get_write_size();
     };
-};  // namespace pwn
+}; // namespace pwn
 #endif

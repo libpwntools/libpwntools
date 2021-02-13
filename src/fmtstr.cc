@@ -4,14 +4,13 @@
 #include <libpwntools/utils.h>
 #include <pwntools>
 #elif _WIN32
-#include "pwntools"
 #include "fmtstr.h"
 #include "logger.h"
+#include "pwntools"
 #include "utils.h"
 #endif
 #include <algorithm>
 #include <iostream>
-
 
 pwn::fmtstr_payload::fmtstr_payload() {
     this->offset = 6;
@@ -44,7 +43,8 @@ void pwn::fmtstr_payload::do_write(uint64_t addr, uint64_t value) {
 
 void pwn::fmtstr_payload::set_bytes_written(size_t n) {
     this->bytes_written = n;
-    if (n) this->padding = 8 - (n % 8);
+    if (n)
+        this->padding = 8 - (n % 8);
 }
 
 uint64_t &pwn::fmtstr_payload::operator[](uint64_t addr) {
@@ -80,7 +80,8 @@ int64_t pwn::fmtstr_payload::find_offset(
 
     for (int i = 1; i < 0x1000; ++i) {
         res = func(egg + "%" + std::to_string(i) + "$p");
-        if (res.find(egg) == std::string::npos) break;
+        if (res.find(egg) == std::string::npos)
+            break;
         if (res.find(egg_hex) != std::string::npos) {
             this->offset = i;
             return i;
@@ -92,7 +93,8 @@ int64_t pwn::fmtstr_payload::find_offset(
 }
 
 std::string pwn::fmtstr_payload::build() {
-    for (auto x : this->writes) this->do_write(x.first, x.second);
+    for (auto x : this->writes)
+        this->do_write(x.first, x.second);
 
     std::sort(
         this->list.begin(), this->list.end(),
@@ -118,7 +120,8 @@ std::string pwn::fmtstr_payload::build() {
     }
 
     payload += std::string(payload_size - payload.length(), '|');
-    for (auto iter : this->list) payload += pwn::p64(iter.first);
+    for (auto iter : this->list)
+        payload += pwn::p64(iter.first);
 
     this->list.clear();
     this->writes.clear();

@@ -28,16 +28,16 @@ namespace pwn {
     } section;
 
     class ELF {
-       public:
+      public:
         ELF(const std::string &);
         int64_t find_str_offset(const std::string &);
         std::vector<section> parse_sections();
         std::vector<symbol> parse_symbols();
         uint64_t &operator[](const std::string &);
 
-       private:
+      private:
         std::string file;
         std::unordered_map<std::string, uint64_t> sym_map;
     };
-}  // namespace pwn
+} // namespace pwn
 #endif

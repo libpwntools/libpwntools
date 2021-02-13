@@ -6,21 +6,21 @@
 #include <iostream>
 #include <string>
 #ifdef __linux__
+#include <arpa/inet.h>
 #include <libpwntools/io.h>
 #include <libpwntools/remote.h>
 #include <libpwntools/utils.h>
-#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/param.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #elif _WIN32
-#include <windows.h>
-#include <winsock.h>
 #include "io.h"
 #include "remote.h"
 #include "utils.h"
+#include <windows.h>
+#include <winsock.h>
 #pragma comment(lib, "Ws2_32.lib")
 #endif
 #ifdef __linux__
@@ -33,23 +33,23 @@
 #define REMOTE_H
 namespace pwn {
     class Remote : public pwn::IO {
-       private:
+      private:
         std::string host;
         std::string port;
-	sock fd;
+        sock fd;
 #ifdef _WIN32
         WSADATA wsaData;
 #endif
-       public:
+      public:
         Remote();
         ~Remote();
-        Remote(const std::string&, uint32_t);
+        Remote(const std::string &, uint32_t);
         virtual std::string recv_raw(size_t) override;
-        virtual size_t send(const std::string&) override;
+        virtual size_t send(const std::string &) override;
 #ifdef __linux__
-        void shutdown(const std::string&);
+        void shutdown(const std::string &);
 #endif
         virtual void close() override;
     };
-}  // namespace pwn
+} // namespace pwn
 #endif

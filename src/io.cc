@@ -1,14 +1,14 @@
 #ifdef __linux__
-#include <unistd.h>
 #include <libpwntools/io.h>
 #include <libpwntools/logger.h>
 #include <libpwntools/utils.h>
+#include <unistd.h>
 #elif _WIN32
 #define NOMINMAX
-#include <windows.h>
 #include "io.h"
 #include "logger.h"
 #include "utils.h"
+#include <windows.h>
 #endif
 
 #include <iostream>
@@ -20,11 +20,14 @@ pwn::IO::~IO() {
     this->buffer.clear();
 };
 
-void pwn::IO::set_debug(bool mode) { this->debug = mode; }
+void pwn::IO::set_debug(bool mode) {
+    this->debug = mode;
+}
 
 std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
-    while (!pwn::ends_with(s, buf)) s += this->recv(1);
+    while (!pwn::ends_with(s, buf))
+        s += this->recv(1);
     return s;
 }
 
@@ -32,7 +35,9 @@ size_t pwn::IO::sendline(const std::string &buf) {
     return this->send(buf + "\n");
 }
 
-std::string pwn::IO::recvline() { return this->recvuntil("\n"); }
+std::string pwn::IO::recvline() {
+    return this->recvuntil("\n");
+}
 
 size_t pwn::IO::sendafter(const std::string &rcv, const std::string &data) {
     this->recvuntil(rcv);
@@ -53,7 +58,7 @@ std::string pwn::IO::recvn(size_t len) {
     return buf;
 };
 
-std::string pwn::IO::recv(size_t len) {  // experimental
+std::string pwn::IO::recv(size_t len) { // experimental
     size_t buffer_length = this->buffer.length();
     std::string tmp;
     if (len >= 1024 && !buffer_length) {
@@ -94,17 +99,17 @@ ret:
     return tmp;
 }
 
-std::string pwn::IO::recv_raw(size_t len) {  // dummy
+std::string pwn::IO::recv_raw(size_t len) { // dummy
     pwn::abort("This should never be called");
     return "";
 }
 
-size_t pwn::IO::send(const std::string &) {  // dummy
+size_t pwn::IO::send(const std::string &) { // dummy
     pwn::abort("This should never be called");
     return 0;
 }
 
-void pwn::IO::close() {  // dummy
+void pwn::IO::close() { // dummy
     pwn::abort("This should never be called");
 }
 
@@ -118,7 +123,8 @@ void pwn::IO::interactive() {
         std::cout << this->buffer;
         this->buffer.clear();
 
-        while (true) std::cout << this->recv_raw(1024);
+        while (true)
+            std::cout << this->recv_raw(1024);
     });
 #ifdef __linux__
     usleep(1500);

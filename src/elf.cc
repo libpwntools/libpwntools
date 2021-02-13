@@ -27,7 +27,8 @@ pwn::ELF::ELF(const std::string &filename) {
     for (pwn::symbol sym : syms) {
         std::string sym_name = sym.symbol_name;
         uint64_t sym_value = sym.symbol_value;
-        if (sym_name.length() && sym_value) this->sym_map[sym_name] = sym_value;
+        if (sym_name.length() && sym_value)
+            this->sym_map[sym_name] = sym_value;
     }
 }
 
@@ -114,6 +115,7 @@ std::vector<pwn::symbol> pwn::ELF::parse_symbols() {
 
 int64_t pwn::ELF::find_str_offset(const std::string &str) {
     int64_t idx = this->file.find(str);
-    if (idx == std::string::npos) return -1;
+    if (idx == std::string::npos)
+        return -1;
     return idx;
 }

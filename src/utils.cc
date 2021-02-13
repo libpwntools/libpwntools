@@ -18,7 +18,8 @@
 #include <random>
 
 bool pwn::ends_with(const std::string &a, const std::string &b) {
-    if (b.size() > a.size()) return false;
+    if (b.size() > a.size())
+        return false;
     return std::equal(a.begin() + a.size() - b.size(), a.end(), b.begin());
 }
 
@@ -41,7 +42,8 @@ void pwn::hexdump_wrap(void *pAddressIn, size_t lSize) {
         pTmp = (unsigned char *)buf.pData;
         lOutLen = (int)buf.lSize;
 
-        if (lOutLen > 16) lOutLen = 16;
+        if (lOutLen > 16)
+            lOutLen = 16;
 
         sprintf(szBuf,
                 " >                            "
@@ -55,7 +57,8 @@ void pwn::hexdump_wrap(void *pAddressIn, size_t lSize) {
             ucTmp = *pTmp++;
             sprintf(szBuf + lIndex, "%02X ", (unsigned short)ucTmp);
 
-            if (!isprint(ucTmp)) ucTmp = '.';
+            if (!isprint(ucTmp))
+                ucTmp = '.';
 
             szBuf[lIndex2] = ucTmp;
             if (!(++lRelPos & 3)) {
@@ -64,7 +67,8 @@ void pwn::hexdump_wrap(void *pAddressIn, size_t lSize) {
             }
         }
 
-        if (!(lRelPos & 3)) lIndex--;
+        if (!(lRelPos & 3))
+            lIndex--;
 
         szBuf[lIndex] = '<';
         szBuf[lIndex + 1] = ' ';
@@ -81,7 +85,8 @@ void pwn::hexdump(std::string s) {
 
 std::string pwn::str_repeat(const std::string &str, size_t n) {
     std::string s;
-    for (int i = 0; i < n; ++i) s += str;
+    for (int i = 0; i < n; ++i)
+        s += str;
     return s;
 }
 
@@ -93,10 +98,12 @@ std::string pwn::str_xor(const std::string &a, const std::string &b) {
 
     if (len_a > len_b) {
         c = a;
-        for (int i = 0; i < len_a; ++i) c[i] ^= b[i % len_b];
+        for (int i = 0; i < len_a; ++i)
+            c[i] ^= b[i % len_b];
     } else {
         c = b;
-        for (int i = 0; i < len_b; ++i) c[i] ^= a[i % len_a];
+        for (int i = 0; i < len_b; ++i)
+            c[i] ^= a[i % len_a];
     }
     return c;
 }
@@ -132,13 +139,15 @@ int pwn::hex_value(unsigned char hex_digit) {
         -1, -1, -1, -1,
     };
     int value = hex_values[hex_digit];
-    if (value == -1) throw std::invalid_argument("invalid hex digit");
+    if (value == -1)
+        throw std::invalid_argument("invalid hex digit");
     return value;
 }
 
 std::string pwn::hex_to_string(const std::string &input) {
     const auto len = input.length();
-    if (len & 1) throw std::invalid_argument("odd length");
+    if (len & 1)
+        throw std::invalid_argument("odd length");
 
     std::string output;
     output.reserve(len / 2);
@@ -152,7 +161,8 @@ std::string pwn::hex_to_string(const std::string &input) {
 
 std::string pwn::remove_newline(std::string &s) {
     int pos;
-    if ((pos = s.find('\n')) != std::string::npos) s.erase(pos);
+    if ((pos = s.find('\n')) != std::string::npos)
+        s.erase(pos);
     return s;
 }
 
@@ -164,11 +174,13 @@ std::string pwn::Hex(uint64_t n) {
 }
 
 uint64_t pwn::Int(const std::string &n, uint8_t base) {
-    if (base < 2 || base > 36) pwn::abort("Invalid base");
+    if (base < 2 || base > 36)
+        pwn::abort("Invalid base");
 
     char *p;
     uint64_t val = strtoul(n.c_str(), &p, base);
-    if (*p) pwn::abort("Not a number");
+    if (*p)
+        pwn::abort("Not a number");
 
     return val;
 }
@@ -180,7 +192,8 @@ std::string pwn::random_string(size_t len) {
     constexpr size_t charset_length = charset.length();
     srand(time(nullptr));
 
-    for (int i = 0; i < len; ++i) s += charset[rand() % charset_length];
+    for (int i = 0; i < len; ++i)
+        s += charset[rand() % charset_length];
     return s;
 }
 

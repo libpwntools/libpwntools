@@ -19,5 +19,5 @@ namespace pwn {
     uint64_t Int(const std::string &, uint8_t);
     std::string random_string(size_t);
     void abort(const std::string &);
-}  // namespace pwn
+} // namespace pwn
 #endif

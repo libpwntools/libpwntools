@@ -13,20 +13,21 @@
 #define PROCESS_H
 namespace pwn {
     class Process : public pwn::IO {
-       public:
+      public:
         Process();
         ~Process();
-        Process(const std::string&);
-        virtual size_t send(const std::string&) override;
+        Process(const std::string &);
+        virtual size_t send(const std::string &) override;
         virtual std::string recv_raw(size_t len) override;
         void debugger_attach();
         virtual void close() override;
-       private:
+
+      private:
 #ifdef __linux__
         int _stdin;
         int _stdout;
 #elif _WIN32
-        void createProcess(const char*);
+        void createProcess(const char *);
         HANDLE g_hChildStd_IN_Rd;
         HANDLE g_hChildStd_IN_Wr;
         HANDLE g_hChildStd_OUT_Rd;
@@ -37,5 +38,5 @@ namespace pwn {
 #endif
         int pid;
     };
-}  // namespace pwn
+} // namespace pwn
 #endif

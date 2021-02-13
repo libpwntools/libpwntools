@@ -9,27 +9,43 @@ void pwn::pause() {
     getchar();
 }
 
-std::string pwn::pack(uint64_t n) { return std::string((char *)&n, 8); }
+std::string pwn::pack(uint64_t n) {
+    return std::string((char *)&n, 8);
+}
 
-std::string pwn::pack(uint32_t n) { return std::string((char *)&n, 4); }
+std::string pwn::pack(uint32_t n) {
+    return std::string((char *)&n, 4);
+}
 
-std::string pwn::pack(int64_t n) { return std::string((char *)&n, 8); }
+std::string pwn::pack(int64_t n) {
+    return std::string((char *)&n, 8);
+}
 
 #ifdef __linux__
 std::string pwn::pack(unsigned long long n) {
     return std::string((char *)&n, 8);
 }
 
-std::string pwn::pack(long long n) { return std::string((char *)&n, 8); }
-#endif 
+std::string pwn::pack(long long n) {
+    return std::string((char *)&n, 8);
+}
+#endif
 
-std::string pwn::pack(int32_t n) { return std::string((char *)&n, 4); }
+std::string pwn::pack(int32_t n) {
+    return std::string((char *)&n, 4);
+}
 
-std::string pwn::pack(const std::string &s) { return s; }
+std::string pwn::pack(const std::string &s) {
+    return s;
+}
 
-std::string pwn::p64(uint64_t n) { return pwn::pack(n); }
+std::string pwn::p64(uint64_t n) {
+    return pwn::pack(n);
+}
 
-std::string pwn::p32(uint32_t n) { return pwn::pack(n); }
+std::string pwn::p32(uint32_t n) {
+    return pwn::pack(n);
+}
 
 uint64_t pwn::u64(const std::string &buf) {
     assert(buf.length() == 8);
@@ -51,7 +67,9 @@ std::string pwn::file::construct() {
     return std::string((char *)this->fp, sizeof(FILE));
 }
 
-pwn::file::~file() { delete this->fp; }
+pwn::file::~file() {
+    delete this->fp;
+}
 #endif
 
 pwn::SigReturnFrame::SigReturnFrame(std::string kern, std::string file_arch) {
@@ -70,10 +88,10 @@ pwn::SigReturnFrame::SigReturnFrame(std::string kern, std::string file_arch) {
     this->trapno_32 = 0;
     this->err_32 = 0;
     this->eip_32 = 0;
-    this->cs_32 = 0x23;  // default
+    this->cs_32 = 0x23; // default
     this->eflags_32 = 0;
     this->esp_at_signal_32 = 0;
-    this->ss_32 = 0x2b;  // default
+    this->ss_32 = 0x2b; // default
     this->fpstate_32 = 0;
 
     this->uc_flags = 0;
@@ -99,7 +117,7 @@ pwn::SigReturnFrame::SigReturnFrame(std::string kern, std::string file_arch) {
     this->rsp = 0;
     this->rip = 0;
     this->eflags_64 = 0;
-    this->csgsfs = 0x33;  // default
+    this->csgsfs = 0x33; // default
     this->err_64 = 0;
     this->trapno_64 = 0;
     this->oldmask_64 = 0;
@@ -135,6 +153,6 @@ std::string pwn::SigReturnFrame::construct_frame() {
                          this->ss_32, this->fpstate_32);
     } else {
         pwn::abort("Supported archs (amd64 / i386).");
-        return "";  // fix compiler warning
+        return ""; // fix compiler warning
     }
 }

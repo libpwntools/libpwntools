@@ -17,9 +17,12 @@ int recv_wrapper(sock f, char *buf, size_t len, int z) {
     return recv(f, buf, len, z);
 }
 
-pwn::Remote::Remote() {}
+pwn::Remote::Remote() {
+}
 
-pwn::Remote::~Remote() { this->close(); }
+pwn::Remote::~Remote() {
+    this->close();
+}
 
 pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     this->host = ip;
@@ -36,7 +39,8 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
         pwn::abort("WSAStartup failed with error: " + std::to_string(res));
 #endif
     hostent *record = gethostbyname(ip.c_str());
-    if (record == nullptr) pwn::abort(ip + " is unavailable");
+    if (record == nullptr)
+        pwn::abort(ip + " is unavailable");
     serv_addr.sin_addr = *(in_addr *)record->h_addr;
 
     if ((this->fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -92,7 +96,8 @@ void pwn::Remote::shutdown(const std::string &h) {
     else
         pwn::abort("Only send / recv allowed");
 
-    if (::shutdown(this->fd, how) < 0) pwn::abort("Shutdown err");
+    if (::shutdown(this->fd, how) < 0)
+        pwn::abort("Shutdown err");
 }
 #endif
 void pwn::Remote::close() {

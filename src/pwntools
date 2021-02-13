@@ -25,7 +25,7 @@ namespace pwn {
 #ifdef __linux__
     std::string pack(unsigned long long n);
     std::string pack(long long n);
-#endif    
+#endif
     std::string pack(int32_t n);
     std::string pack(const std::string &s);
     std::string p64(uint64_t n);
@@ -33,13 +33,11 @@ namespace pwn {
     uint64_t u64(const std::string &buf);
     uint32_t u32(const std::string &buf);
 
-    template <typename T>
-    void impl_(std::string &buf, T n) {
+    template <typename T> void impl_(std::string &buf, T n) {
         buf += pwn::pack(n);
     }
 
-    template <typename T>
-    void flat_raw(std::string &buf, T const &arg) {
+    template <typename T> void flat_raw(std::string &buf, T const &arg) {
         pwn::impl_(buf, arg);
     }
 
@@ -54,8 +52,7 @@ namespace pwn {
         buf += std::string((char *)&value, sizeof(T));
     }
 
-    template <typename T>
-    std::string flat(T const &arg) {
+    template <typename T> std::string flat(T const &arg) {
         std::string buf;
         pwn::flat_raw(buf, arg);
         return buf;
@@ -71,7 +68,7 @@ namespace pwn {
 
 #ifdef __linux__
     class file {
-       public:
+      public:
         FILE *fp;
         file();
         std::string construct();
@@ -80,7 +77,7 @@ namespace pwn {
 #endif
 
     class SigReturnFrame {
-       public:
+      public:
         std::string arch;
         std::string kernel;
         uint32_t gs_32;
@@ -138,7 +135,7 @@ namespace pwn {
         SigReturnFrame(std::string kern, std::string file_arch);
         std::string construct_frame();
     };
-};  // namespace pwn
+}; // namespace pwn
 #ifdef __linux__
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/logger.h>
