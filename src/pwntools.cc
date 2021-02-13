@@ -141,5 +141,6 @@ std::string pwn::SigReturnFrame::construct_frame() {
 		this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32);
 	} else {
 		pwn::abort("Supported archs (amd64 / i386).");
+        return ""; // fix compiler warning
 	}
 }
