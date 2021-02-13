@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <sys/prctl.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #elif _WIN32
 #include "logger.h"
@@ -128,6 +129,7 @@ size_t pwn::Process::send(const std::string &buf) {
 void pwn::Process::close() {
 #ifdef __linux__
     kill(this->pid, SIGKILL);
+    waitpid(this->pid, nullptr, 0);
     ::close(this->_stdin);
     ::close(this->_stdout);
 #elif _WIN32
