@@ -1,9 +1,9 @@
 #include <pwntools>
-#include <functional>
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/utils.h>
 #include <libpwntools/logger.h>
 #include <iostream>
+#include <algorithm>
 
 pwn::fmtstr_payload::fmtstr_payload() {
     this->offset = 6;
