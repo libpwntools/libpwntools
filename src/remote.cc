@@ -42,7 +42,7 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     if((this->fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         pwn::abort("Error while creating socket");
 
-    if (connect(this->fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (connect(this->fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         pwn::abort("Connection failed");
 
     this->debug = false;
