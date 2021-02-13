@@ -18,5 +18,6 @@ namespace pwn {
     std::string Hex(uint64_t);
     uint64_t Int(const std::string&, uint8_t);
     std::string random_string(size_t);
+    void abort(const std::string&);
 }
 #endif

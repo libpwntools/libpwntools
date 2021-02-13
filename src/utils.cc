@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <libpwntools/utils.h>
+#include <libpwntools/logger.h>
 #ifdef __linux__
 #include <ostream>
 #include <bits/stdc++.h>
@@ -184,4 +185,9 @@ std::string pwn::random_string(size_t len) {
     for(int i=0; i<len; ++i)
         s += charset[rand() % charset_length];
     return s;
+}
+
+void pwn::abort(const std::string& s) {
+    pwn::log::error(s);
+    exit(1);
 }
