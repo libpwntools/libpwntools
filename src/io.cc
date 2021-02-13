@@ -96,20 +96,17 @@ std::string pwn::IO::recv(size_t len) { // experimental
 }
 
 std::string pwn::IO::recv_raw(size_t len) { // dummy
-    std::cout << "This should never be called\n";
-    exit(0);
+    pwn::abort("This should never be called");
     return "";
 }
 
 size_t pwn::IO::send(const std::string&) { // dummy
-    std::cout << "This should never be called\n";
-    exit(0);
+    pwn::abort("This should never be called");
     return 0;
 }
 
 void pwn::IO::close() { // dummy
-    std::cout << "This should never be called\n";
-    exit(0);
+    pwn::abort("This should never be called");
 }
 
 

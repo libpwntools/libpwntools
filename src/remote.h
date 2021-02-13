@@ -18,6 +18,11 @@
 #include <winsock.h>
 #pragma comment (lib, "Ws2_32.lib")
 #endif
+#ifdef __linux__
+#define sock int
+#else
+#define sock SOCKET
+#endif
 
 #ifndef REMOTE_H
 #define REMOTE_H

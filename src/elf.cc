@@ -33,6 +33,8 @@ pwn::ELF::ELF(const std::string &filename) {
 }
 
 uint64_t &pwn::ELF::operator[](const std::string &sym_name) {
+    if (this->sym_map.find(sym_name) == this->sym_map.end())
+        pwn::abort("Symbol "+sym_name+" not found");
     return this->sym_map[sym_name];
 }
 

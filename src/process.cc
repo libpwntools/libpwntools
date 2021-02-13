@@ -52,25 +52,17 @@ pwn::Process::Process(const std::string& path) {
     this->saAttr.bInheritHandle = true;
     this->saAttr.lpSecurityDescriptor = nullptr;
 
-    if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr, &this->saAttr, 0)) {
-        pwn::log::error("Error Creating Pipe");
-        exit(-1);
-    }
+    if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr, &this->saAttr, 0))
+        pwn::abort("Error Creating Pipe");
 
-    if (!SetHandleInformation(this->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) {
-        pwn::log::error("Error SetHandle");
-        exit(-1);
-    }
+    if (!SetHandleInformation(this->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
+        pwn::abort("Error SetHandle");
 
-    if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr, 0)) {
-        pwn::log::error("Error Createing Pipe");
-        exit(-1);
-    }
+    if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr, 0))
+        pwn::abort("Error Createing Pipe");
 
-    if (!SetHandleInformation(this->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) {
-        pwn::log::error("Error SetHandle");
-        exit(-1);
-    }
+    if (!SetHandleInformation(this->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
+        pwn::abort("Error SetHandle");
 
     createProcess((const char *)path.c_str());
 #endif
@@ -100,10 +92,8 @@ std::string pwn::Process::recv_raw(size_t len) {
     DWORD dwRead;
     BOOL bSuccess = FALSE;
     bSuccess = ReadFile(this->g_hChildStd_OUT_Rd, buf, len, &dwRead, nullptr);
-    if (!bSuccess) {
-        pwn::log::error("Error reading");
-        exit(-1);
-    }
+    if (!bSuccess)
+        pwn::abort("Error reading");
     std::string s(buf, dwRead);
 #else
     free(buf);
@@ -163,10 +153,8 @@ void pwn::Process::createProcess(const char* progname) {
         &siStartInfo,
         &piProcInfo);
 
-    if (!bSuccess) {
-        pwn::log::error("Error creating process");
-        exit(-1);
-    }
+    if (!bSuccess)
+        pwn::abort("Error creating process");
     else {
         CloseHandle(piProcInfo.hProcess);
         CloseHandle(piProcInfo.hThread);
@@ -174,7 +162,7 @@ void pwn::Process::createProcess(const char* progname) {
         CloseHandle(g_hChildStd_OUT_Wr);
         CloseHandle(g_hChildStd_IN_Rd);
         this->pid = piProcInfo.dwProcessId;
-        pwn::log::error("Process created: " + std::to_string(this->pid));
+        pwn::log::info("Process created: " + std::to_string(this->pid));
     }
 }
 #endif

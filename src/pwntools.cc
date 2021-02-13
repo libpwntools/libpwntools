@@ -135,16 +135,11 @@ std::string pwn::SigReturnFrame::construct_frame() {
 		this->rsi,this->rbp,this->rbx,this->rdx,this->rax,this->rcx,this->rsp,this->rip,this->eflags_64,
 		this->csgsfs,this->err_32,this->trapno_64, this->oldmask_64, this->cr2_64, this->fpstate_64,
 		this->reserved, this->sigmask);	
-	}
-
-	else if (this->arch == "i386") {
+	} else if (this->arch == "i386") {
 		return pwn::flat(this->gs_32, this->fs_32, this->es_32, this->ds_32, this->edi_32, this->esi_32,
 		this->ebp_32, this->esp_32, this->ebx_32, this->edx_32, this->ecx_32, this->eax_32, this->trapno_32,
 		this->err_32, this->eip_32, this->cs_32, this->eflags_32, this->esp_at_signal_32, this->ss_32, this->fpstate_32);
-	}
-
-	else {
-		std::cout << "Supported archs (amd64 / i386). " << std::endl;
-		exit(0);
+	} else {
+		pwn::abort("Supported archs (amd64 / i386).");
 	}
 }

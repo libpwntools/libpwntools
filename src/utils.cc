@@ -161,17 +161,13 @@ std::string pwn::Hex(uint64_t n) {
 }
 
 uint64_t pwn::Int(const std::string &n, uint8_t base) {
-    if(base < 2 || base > 36) {
-        std::cerr << "Invalid base\n";
-        exit(1);
-    }
+    if(base < 2 || base > 36)
+        pwn::abort("Invalid base");
 
     char * p;
     uint64_t val = strtoul(n.c_str(), &p, base);
-    if(*p) {
-        std::cerr << "Not a number\n";
-        exit(1);
-    }
+    if(*p)
+        pwn::abort("Not a number");
 
     return val;
 }
