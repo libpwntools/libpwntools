@@ -28,26 +28,26 @@
 #ifndef REMOTE_H
 #define REMOTE_H
 namespace pwn {
-class Remote : public pwn::IO {
-   private:
-    std::string host;
-    std::string port;
+    class Remote : public pwn::IO {
+       private:
+        std::string host;
+        std::string port;
 #ifdef __linux__
-    int fd;
+        int fd;
 #elif _WIN32
-    WSADATA wsaData;
-    SOCKET fd;
+        WSADATA wsaData;
+        SOCKET fd;
 #endif
-   public:
-    Remote();
-    ~Remote();
-    Remote(const std::string&, uint32_t);
-    virtual std::string recv_raw(size_t) override;
-    virtual size_t send(const std::string&) override;
+       public:
+        Remote();
+        ~Remote();
+        Remote(const std::string&, uint32_t);
+        virtual std::string recv_raw(size_t) override;
+        virtual size_t send(const std::string&) override;
 #ifdef __linux__
-    void shutdown(const std::string&);
+        void shutdown(const std::string&);
 #endif
-    virtual void close() override;
-};
+        virtual void close() override;
+    };
 }  // namespace pwn
 #endif
