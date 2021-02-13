@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <algorithm>
+#include <functional>
 
 #ifndef FMTSTR_H
 #define FMTSTR_H
