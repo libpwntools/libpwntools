@@ -1,7 +1,7 @@
-#include "pwntools"
 #include <iostream>
+#include <pwntools>
 using namespace pwn;
 
 int main(void) {
-    hexdump(flat(( (uint64_t)1,(uint64_t) 2, (uint64_t) 3,(int64_t) -4, "test")) );
+    hexdump(flat(1, 2, -3, 4L, "test"));
 }
