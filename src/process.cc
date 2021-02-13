@@ -1,24 +1,23 @@
 #include <iostream>
 #ifdef __linux__
+#include <bits/stdc++.h>
+#include <signal.h>
+#include <stdint.h>
+#include <sys/prctl.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <signal.h>
-#include <sys/prctl.h>
-#include <bits/stdc++.h>
-#include <stdint.h>
 #elif _WIN32
 #include <Windows.h>
 #endif
-#include <thread>
-#include <signal.h>
 #include <libpwntools/process.h>
 #include <libpwntools/utils.h>
+#include <signal.h>
+
+#include <thread>
 
 pwn::Process::Process() {}
 
-pwn::Process::~Process() {
-    this->close();
-}
+pwn::Process::~Process() { this->close(); }
 
 pwn::Process::Process(const std::string& path) {
 #ifdef __linux__
@@ -29,14 +28,14 @@ pwn::Process::Process(const std::string& path) {
     pipe(outpipefd);
 
     this->pid = fork();
-    if(!this->pid) {
+    if (!this->pid) {
         dup2(outpipefd[0], 0);
         dup2(inpipefd[1], 1);
         dup2(inpipefd[1], 2);
 
         std::vector<char*> av;
         prctl(PR_SET_PDEATHSIG, SIGTERM);
-        av.push_back((char *)path.c_str());
+        av.push_back((char*)path.c_str());
         av.push_back(nullptr);
 
         execv(path.c_str(), &av[0]);
@@ -52,19 +51,21 @@ pwn::Process::Process(const std::string& path) {
     this->saAttr.bInheritHandle = true;
     this->saAttr.lpSecurityDescriptor = nullptr;
 
-    if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr, &this->saAttr, 0))
+    if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr,
+                    &this->saAttr, 0))
         pwn::abort("Error Creating Pipe");
 
     if (!SetHandleInformation(this->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
         pwn::abort("Error SetHandle");
 
-    if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr, 0))
+    if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr,
+                    0))
         pwn::abort("Error Createing Pipe");
 
     if (!SetHandleInformation(this->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
         pwn::abort("Error SetHandle");
 
-    createProcess((const char *)path.c_str());
+    createProcess((const char*)path.c_str());
 #endif
     this->debug = false;
 }
@@ -80,11 +81,10 @@ void pwn::Process::debugger_attach() {
     exit(1);
 #endif
     system(cmd.c_str());
-
 }
 
 std::string pwn::Process::recv_raw(size_t len) {
-    char* buf = (char *)malloc(len);
+    char* buf = (char*)malloc(len);
 #ifdef __linux__
     len = read(this->_stdout, buf, len);
     std::string s(buf, len);
@@ -92,8 +92,7 @@ std::string pwn::Process::recv_raw(size_t len) {
     DWORD dwRead;
     BOOL bSuccess = FALSE;
     bSuccess = ReadFile(this->g_hChildStd_OUT_Rd, buf, len, &dwRead, nullptr);
-    if (!bSuccess)
-        pwn::abort("Error reading");
+    if (!bSuccess) pwn::abort("Error reading");
     std::string s(buf, dwRead);
 #else
     free(buf);
@@ -102,8 +101,8 @@ std::string pwn::Process::recv_raw(size_t len) {
     return s;
 }
 
-size_t pwn::Process::send(const std::string &buf) {
-    if(this->debug) {
+size_t pwn::Process::send(const std::string& buf) {
+    if (this->debug) {
         std::cout << "Send: \n";
         pwn::hexdump(buf);
     }
@@ -113,13 +112,14 @@ size_t pwn::Process::send(const std::string &buf) {
     DWORD dwWritten;
     BOOL bSuccess;
 
-    return WriteFile(this->g_hChildStd_IN_Wr, buf.c_str(), buf.size(), &dwWritten, nullptr);
+    return WriteFile(this->g_hChildStd_IN_Wr, buf.c_str(), buf.size(),
+                     &dwWritten, nullptr);
 #endif
 }
 
 void pwn::Process::close() {
 #ifdef __linux__
-    kill(this->pid,SIGKILL);
+    kill(this->pid, SIGKILL);
     ::close(this->_stdin);
     ::close(this->_stdout);
 #elif _WIN32
@@ -129,7 +129,6 @@ void pwn::Process::close() {
 
 #ifdef _WIN32
 void pwn::Process::createProcess(const char* progname) {
-
     BOOL bSuccess = FALSE;
 
     ZeroMemory(&this->piProcInfo, sizeof(PROCESS_INFORMATION));
@@ -142,16 +141,8 @@ void pwn::Process::createProcess(const char* progname) {
     siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
     LPSTR szCmdline = const_cast<LPSTR>(progname);
-    bSuccess = CreateProcess(nullptr,
-        szCmdline,
-        nullptr,
-        nullptr,
-        TRUE,
-        0,
-        nullptr,
-        nullptr,
-        &siStartInfo,
-        &piProcInfo);
+    bSuccess = CreateProcess(nullptr, szCmdline, nullptr, nullptr, TRUE, 0,
+                             nullptr, nullptr, &siStartInfo, &piProcInfo);
 
     if (!bSuccess)
         pwn::abort("Error creating process");

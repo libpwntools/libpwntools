@@ -5,25 +5,23 @@
 #include <windows.h>
 #endif
 #include <libpwntools/io.h>
+#include <libpwntools/logger.h>
 #include <libpwntools/utils.h>
+
 #include <iostream>
 #include <thread>
-#include <libpwntools/logger.h>
 
-pwn::IO::IO() {};
+pwn::IO::IO(){};
 pwn::IO::~IO() {
     std::cout << this->buffer;
     this->buffer.clear();
 };
 
-void pwn::IO::set_debug(bool mode) {
-    this->debug = mode;
-}
+void pwn::IO::set_debug(bool mode) { this->debug = mode; }
 
 std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
-    while (!pwn::ends_with(s, buf))
-        s += this->recv(1);
+    while (!pwn::ends_with(s, buf)) s += this->recv(1);
     return s;
 }
 
@@ -31,9 +29,7 @@ size_t pwn::IO::sendline(const std::string &buf) {
     return this->send(buf + "\n");
 }
 
-std::string pwn::IO::recvline() {
-    return this->recvuntil("\n");
-}
+std::string pwn::IO::recvline() { return this->recvuntil("\n"); }
 
 size_t pwn::IO::sendafter(const std::string &rcv, const std::string &data) {
     this->recvuntil(rcv);
@@ -41,7 +37,7 @@ size_t pwn::IO::sendafter(const std::string &rcv, const std::string &data) {
 }
 
 size_t pwn::IO::sendlineafter(const std::string &rcv, const std::string &data) {
-    return this->sendafter(rcv, data+"\n");
+    return this->sendafter(rcv, data + "\n");
 }
 
 std::string pwn::IO::recvn(size_t len) {
@@ -54,25 +50,25 @@ std::string pwn::IO::recvn(size_t len) {
     return buf;
 };
 
-std::string pwn::IO::recv(size_t len) { // experimental
+std::string pwn::IO::recv(size_t len) {  // experimental
     size_t buffer_length = this->buffer.length();
     std::string tmp;
-    if(len >= 1024 && !buffer_length) {
+    if (len >= 1024 && !buffer_length) {
         tmp = this->recv_raw(len);
         goto ret;
     }
 
-    if(buffer_length >= len) {
+    if (buffer_length >= len) {
         tmp = this->buffer.substr(0, len);
-        if(buffer_length > len)
+        if (buffer_length > len)
             this->buffer = this->buffer.substr(len);
         else
             this->buffer.clear();
         goto ret;
     }
 
-    if(buffer_length) {
-        this->buffer += this->recv_raw(len-buffer_length);
+    if (buffer_length) {
+        this->buffer += this->recv_raw(len - buffer_length);
         tmp = this->buffer;
         this->buffer.clear();
         goto ret;
@@ -82,47 +78,44 @@ std::string pwn::IO::recv(size_t len) { // experimental
     buffer_length = this->buffer.length();
     tmp = this->buffer.substr(0, std::min(buffer_length, len));
 
-    if(tmp.length() == buffer_length)
+    if (tmp.length() == buffer_length)
         this->buffer.clear();
     else
         this->buffer = this->buffer.substr(len);
 
-    ret:
-    if(this->debug) {
+ret:
+    if (this->debug) {
         std::cout << "(Recv)\n";
         pwn::hexdump(tmp);
     }
     return tmp;
 }
 
-std::string pwn::IO::recv_raw(size_t len) { // dummy
+std::string pwn::IO::recv_raw(size_t len) {  // dummy
     pwn::abort("This should never be called");
     return "";
 }
 
-size_t pwn::IO::send(const std::string&) { // dummy
+size_t pwn::IO::send(const std::string &) {  // dummy
     pwn::abort("This should never be called");
     return 0;
 }
 
-void pwn::IO::close() { // dummy
+void pwn::IO::close() {  // dummy
     pwn::abort("This should never be called");
 }
-
 
 void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
 
     pwn::log::info("Switching to interactive mode");
-    std::thread t1(
-    [&]() -> void {
+    std::thread t1([&]() -> void {
         std::string s;
         std::cout << this->buffer;
         this->buffer.clear();
 
-        while(true)
-            std::cout << this->recv_raw(1024);
+        while (true) std::cout << this->recv_raw(1024);
     });
 #ifdef __linux__
     usleep(1500);
@@ -130,9 +123,9 @@ void pwn::IO::interactive() {
     Sleep(50);
 #endif
     std::string inp;
-    while(true) {
+    while (true) {
         std::cout << "$ ";
-        getline(std::cin ,inp);
+        getline(std::cin, inp);
         this->sendline(inp);
 #ifdef __linux__
         usleep(250000);
