@@ -1,4 +1,8 @@
+#ifdef __linux__
 #include <pwntools>
+#elif _WIN32
+#include "pwntools"
+#endif
 
 void pwn::pause() {
     std::cout << "(pause) Press enter to release." << std::endl;
@@ -11,11 +15,13 @@ std::string pwn::pack(uint32_t n) { return std::string((char *)&n, 4); }
 
 std::string pwn::pack(int64_t n) { return std::string((char *)&n, 8); }
 
+#ifdef __linux__
 std::string pwn::pack(unsigned long long n) {
     return std::string((char *)&n, 8);
 }
 
 std::string pwn::pack(long long n) { return std::string((char *)&n, 8); }
+#endif 
 
 std::string pwn::pack(int32_t n) { return std::string((char *)&n, 4); }
 

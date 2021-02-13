@@ -1,12 +1,15 @@
 #ifdef __linux__
 #include <unistd.h>
-#elif _WIN32
-#define NOMINMAX
-#include <windows.h>
-#endif
 #include <libpwntools/io.h>
 #include <libpwntools/logger.h>
 #include <libpwntools/utils.h>
+#elif _WIN32
+#define NOMINMAX
+#include <windows.h>
+#include "io.h"
+#include "logger.h"
+#include "utils.h"
+#endif
 
 #include <iostream>
 #include <thread>

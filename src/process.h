@@ -1,6 +1,8 @@
 #pragma once
+#ifdef __linux__
 #include <libpwntools/io.h>
-#ifdef _WIN32
+#elif _WIN32
+#include "io.h"
 #include <stdio.h>
 #include <strsafe.h>
 #include <tchar.h>
@@ -19,7 +21,6 @@ namespace pwn {
         virtual std::string recv_raw(size_t len) override;
         void debugger_attach();
         virtual void close() override;
-
        private:
 #ifdef __linux__
         int _stdin;

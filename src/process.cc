@@ -6,11 +6,15 @@
 #include <sys/prctl.h>
 #include <sys/types.h>
 #include <unistd.h>
-#elif _WIN32
-#include <Windows.h>
-#endif
 #include <libpwntools/process.h>
 #include <libpwntools/utils.h>
+#elif _WIN32
+#include <Windows.h>
+#include "process.h"
+#include "utils.h"
+#include "logger.h"
+#endif
+
 #include <signal.h>
 
 #include <thread>

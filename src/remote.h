@@ -1,13 +1,14 @@
 #pragma once
-#include <libpwntools/io.h>
-#include <libpwntools/remote.h>
-#include <libpwntools/utils.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <iostream>
 #include <string>
 #ifdef __linux__
+#include <libpwntools/io.h>
+#include <libpwntools/remote.h>
+#include <libpwntools/utils.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -17,6 +18,9 @@
 #elif _WIN32
 #include <windows.h>
 #include <winsock.h>
+#include "io.h"
+#include "remote.h"
+#include "utils.h"
 #pragma comment(lib, "Ws2_32.lib")
 #endif
 #ifdef __linux__
@@ -32,11 +36,9 @@ namespace pwn {
        private:
         std::string host;
         std::string port;
-#ifdef __linux__
-        int fd;
-#elif _WIN32
+	sock fd;
+#ifdef _WIN32
         WSADATA wsaData;
-        SOCKET fd;
 #endif
        public:
         Remote();

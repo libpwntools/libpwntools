@@ -22,8 +22,10 @@ namespace pwn {
     std::string pack(uint64_t n);
     std::string pack(uint32_t n);
     std::string pack(int64_t n);
+#ifdef __linux__
     std::string pack(unsigned long long n);
     std::string pack(long long n);
+#endif    
     std::string pack(int32_t n);
     std::string pack(const std::string &s);
     std::string p64(uint64_t n);
@@ -137,11 +139,19 @@ namespace pwn {
         std::string construct_frame();
     };
 };  // namespace pwn
-
+#ifdef __linux__
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/logger.h>
 #include <libpwntools/process.h>
 #include <libpwntools/pwnelf.h>
 #include <libpwntools/remote.h>
 #include <libpwntools/utils.h>
+#elif _WIN32
+#include "fmtstr.h"
+#include "logger.h"
+#include "process.h"
+#include "remote.h"
+#include "utils.h"
+#endif
+
 #endif

@@ -1,4 +1,8 @@
+#ifdef __linux__
 #include <libpwntools/logger.h>
+#elif _WIN32
+#include "logger.h"
+#endif
 
 void pwn::log::success(const std::string& msg) {
     std::cout << "[\x1b[1m\x1b[32m+\x1b[m] " << msg << '\n';

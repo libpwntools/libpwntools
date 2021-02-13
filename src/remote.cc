@@ -1,6 +1,9 @@
+#ifdef __linux__
 #include <libpwntools/logger.h>
 #include <libpwntools/remote.h>
-#ifdef _WIN32
+#elif _WIN32
+#include "logger.h"
+#include "remote.h"
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <cassert>
@@ -59,8 +62,8 @@ size_t pwn::Remote::send(const std::string &data) {
         pwn::hexdump(data);
     }
     size_t res;
-#ifdef _WIN32
     res = send_wrapper(this->fd, data.c_str(), data.size(), 0);
+#ifdef _WIN32
     if (res == SOCKET_ERROR) {
         pwn::log::error("send failed with error : " +
                         std::to_string(WSAGetLastError()));
@@ -69,7 +72,6 @@ size_t pwn::Remote::send(const std::string &data) {
         exit(1);
     }
 #elif __linux__
-    res = send_wrapper(this->fd, data.c_str(), data.size(), 0);
     if (res < 0) {
         pwn::log::error("send failed");
         this->close();

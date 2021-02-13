@@ -1,5 +1,10 @@
+#ifdef __linux__
 #include <libpwntools/logger.h>
 #include <libpwntools/utils.h>
+#elif _WIN32
+#include "logger.h"
+#include "utils.h"
+#endif
 
 #include <iostream>
 #include <string>

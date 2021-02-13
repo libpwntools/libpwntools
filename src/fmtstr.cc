@@ -1,10 +1,17 @@
+#ifdef __linux__
 #include <libpwntools/fmtstr.h>
 #include <libpwntools/logger.h>
 #include <libpwntools/utils.h>
-
+#include <pwntools>
+#elif _WIN32
+#include "pwntools"
+#include "fmtstr.h"
+#include "logger.h"
+#include "utils.h"
+#endif
 #include <algorithm>
 #include <iostream>
-#include <pwntools>
+
 
 pwn::fmtstr_payload::fmtstr_payload() {
     this->offset = 6;
