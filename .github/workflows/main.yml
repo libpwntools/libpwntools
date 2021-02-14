@@ -31,12 +31,14 @@ jobs:
           mkdir build && cd build && cmake .. && make && sudo make install
           cd ../src && make
           /tmp/main
+          cp /tmp/main ../build/
           make static
           /tmp/main
+          cp /tmp/main ../build/main_static
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Make artifacts
+          name: build
           path: |
-            /tmp/main
-            /lib/libpwntools.so
+            /build/main*
+            /build/libpwntools.so
