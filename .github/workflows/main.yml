@@ -56,6 +56,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: D:\a\libpwntools\libpwntools\build\Release\exp.exe
-
-        
+          path: | 
+            D:\a\libpwntools\libpwntools\build\Release\exp.exe
+            D:\a\libpwntools\libpwntools\build\Release\pwntools.dll
