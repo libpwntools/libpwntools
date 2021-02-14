@@ -40,5 +40,5 @@ jobs:
         with:
           name: build
           path: |
-            /build/main*
-            /build/libpwntools.so
+            build/main*
+            build/libpwntools.so
