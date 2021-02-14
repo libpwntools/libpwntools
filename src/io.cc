@@ -32,6 +32,7 @@ std::string pwn::IO::recvuntil(const std::string &buf) {
     while (!pwn::ends_with(s, buf))
         s += this->recv(1);
     if (_debug) {
+        std::cout << "(Recv)\n";
         this->debug = true;
         pwn::hexdump(s);
     }
