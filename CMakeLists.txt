@@ -21,5 +21,6 @@ if(UNIX)
         install(FILES ${HEADERS} DESTINATION include/)
 else()
 	add_executable (exp "src/main.cpp" "src/fmtstr.cc" "src/fmtstr.h" "src/pwntools.cc" "src/pwntools" "src/logger.cc" "src/logger.h" "src/utils.cc" "src/utils.h"  "src/io.cc" "src/io.h" "src/process.cc" "src/process.h" "src/remote.cc" "src/remote.h")
+    add_library (pwntools SHARED "src/fmtstr.cc" "src/fmtstr.h" "src/pwntools.cc" "src/pwntools" "src/logger.cc" "src/logger.h" "src/utils.cc" "src/utils.h"  "src/io.cc" "src/io.h" "src/process.cc" "src/process.h" "src/remote.cc" "src/remote.h")
 
 endif()
