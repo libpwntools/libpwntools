@@ -26,8 +26,15 @@ void pwn::IO::set_debug(bool mode) {
 
 std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
+    bool _debug = false;
+    if (this->debug)
+        std::swap(this->debug, debug);
     while (!pwn::ends_with(s, buf))
         s += this->recv(1);
+    if (_debug) {
+        this->debug = true;
+        pwn::hexdump(s);
+    }
     return s;
 }
 
