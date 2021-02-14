@@ -28,7 +28,7 @@ std::string pwn::IO::recvuntil(const std::string &buf) {
     std::string s;
     bool _debug = false;
     if (this->debug)
-        std::swap(this->debug, debug);
+        std::swap(this->debug, _debug);
     while (!pwn::ends_with(s, buf))
         s += this->recv(1);
     if (_debug) {
