@@ -33,36 +33,16 @@ namespace pwn {
     uint64_t u64(const std::string &buf);
     uint32_t u32(const std::string &buf);
 
-    template <typename T> void impl_(std::string &buf, T n) {
-        buf += pwn::pack(n);
+    template <typename T> void impl_(std::string &buf, const T &t) {
+        if constexpr (std::is_integral_v<T>)
+            buf += std::string((char *)&t, sizeof(T));
+        else
+            buf += pwn::pack(t);
     }
 
-    template <typename T> void flat_raw(std::string &buf, T const &arg) {
-        pwn::impl_(buf, arg);
-    }
-
-    template <typename T, typename... Ts>
-    void flat_raw(std::string &buf, T const &arg, Ts &&... args) {
-        pwn::flat_raw(buf, arg);
-        pwn::flat_raw(buf, std::forward<Ts>(args)...);
-    }
-
-    template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-    constexpr void impl_(std::string &buf, T const &value) {
-        buf += std::string((char *)&value, sizeof(T));
-    }
-
-    template <typename T> std::string flat(T const &arg) {
+    template <typename... T> std::string flat(T... args) {
         std::string buf;
-        pwn::flat_raw(buf, arg);
-        return buf;
-    }
-
-    template <typename T, typename... Ts>
-    std::string flat(T const &arg, Ts &&... args) {
-        std::string buf;
-        pwn::flat_raw(buf, arg);
-        pwn::flat_raw(buf, std::forward<Ts>(args)...);
+        int dummy[] = {(impl_(buf, std::forward<T>(args)), 0)...};
         return buf;
     }
 

@@ -3,5 +3,5 @@
 using namespace pwn;
 
 int main(void) {
-    hexdump(flat(1, 2, -3, 4L, "test"));
+    hexdump(flat(1, 2, -3, 4L, "test", 9));
 }
