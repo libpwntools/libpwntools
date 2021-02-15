@@ -8,8 +8,8 @@ namespace pwn {
       public:
         IO();
         ~IO();
-        virtual size_t send(const std::string &);
-        virtual std::string recv_raw(size_t);
+        virtual size_t send(const std::string &) = 0;
+        virtual std::string recv_raw(size_t) = 0;
         std::string recv(size_t);
         void interactive();
         size_t sendline(const std::string &);
@@ -19,7 +19,7 @@ namespace pwn {
         size_t sendlineafter(const std::string &, const std::string &);
         size_t sendafter(const std::string &, const std::string &);
         void set_debug(bool);
-        virtual void close();
+        virtual void close() = 0;
 
       protected:
         bool debug;

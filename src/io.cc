@@ -107,20 +107,6 @@ ret:
     return tmp;
 }
 
-std::string pwn::IO::recv_raw(size_t len) { // dummy
-    pwn::abort("This should never be called");
-    return "";
-}
-
-size_t pwn::IO::send(const std::string &) { // dummy
-    pwn::abort("This should never be called");
-    return 0;
-}
-
-void pwn::IO::close() { // dummy
-    pwn::abort("This should never be called");
-}
-
 void pwn::IO::interactive() {
     std::cout.setf(std::ios::unitbuf);
     std::cin.setf(std::ios::unitbuf);
