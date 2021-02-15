@@ -1,3 +1,6 @@
+#define TOTAL_SECTION_HEADERS 8
+#define TOTAL_DATA_DIRECTORIES 0x10
+
 enum SIGNATURE {
     IMAGE_DOS_SIGNATURE = 0x5a4d,
     IMAGE_OS2_SIGNATURE = 0x454e,
@@ -6,6 +9,25 @@ enum SIGNATURE {
 };
 
 enum PE_MAGIC { PE_ROM_IMAGE = 0x107, PE_32BIT = 0x10b, PE_64BIT = 0x20b };
+
+enum DATA_DIRECTORY {
+    export_table_entry,
+    import_table_entry,
+    resource_table_entry,
+    exception_table_entry,
+    certificate_table_entry,
+    base_relocation_entry,
+    debug_entry,
+    architecture_entry,
+    global_ptr_entry,
+    tls_table_entry,
+    load_config_table_entry,
+    bound_import_entry,
+    iat_entry,
+    delay_import_descriptor_entry,
+    clr_runtime_header_entry,
+    reserved_entry,
+};
 
 enum MACHINE {
     UNKNOWN = 0x0,
@@ -73,8 +95,8 @@ struct pe_data_directory_entry {
     uint32_t size;
 };
 
-struct image_optional_header {
-
+struct image_optional_header_32bit {
+    // Standard fields
     uint16_t magic;
     uint8_t major_linker_version;
     uint8_t minor_linker_version;
@@ -84,6 +106,42 @@ struct image_optional_header {
     uint32_t address_entrypoint;
     uint32_t code_base;
     uint32_t data_base;
+    // Nt additional fields
+    uint32_t image_base;
+    uint32_t section_alignment;
+    uint32_t file_alignment;
+    uint16_t major_operating_system_version;
+    uint16_t minor_operating_system_version;
+    uint16_t major_image_version;
+    uint16_t minor_image_version;
+    uint16_t major_subsystem_version;
+    uint16_t minor_subsystem_version;
+    uint32_t win32_version_value;
+    uint32_t image_size;
+    uint32_t header_size;
+    uint32_t checksum;
+    uint16_t subsystem;
+    uint16_t dll_characteristics;
+    uint32_t size_of_stack_reserve;
+    uint32_t size_of_stack_commit;
+    uint32_t size_of_heap_reserve;
+    uint32_t size_of_heap_commit;
+    uint32_t loaderflags;
+    uint32_t n_rva_sizes;
+    pe_data_directory_entry data_directories[TOTAL_DATA_DIRECTORIES];
+};
+
+struct image_optional_header_64bit {
+    // Standard fields
+    uint16_t magic;
+    uint8_t major_linker_version;
+    uint8_t minor_linker_version;
+    uint32_t code_size;
+    uint32_t size_of_initialized_data;
+    uint32_t size_of_uninitialized_data;
+    uint32_t address_entrypoint;
+    uint32_t code_base;
+    // Nt additional fields
     uint64_t image_base;
     uint32_t section_alignment;
     uint32_t file_alignment;
@@ -93,7 +151,7 @@ struct image_optional_header {
     uint16_t minor_image_version;
     uint16_t major_subsystem_version;
     uint16_t minor_subsystem_version;
-    uint32_t reserved1;
+    uint32_t win32_version_value;
     uint32_t image_size;
     uint32_t header_size;
     uint32_t checksum;
@@ -105,20 +163,18 @@ struct image_optional_header {
     uint64_t size_of_heap_commit;
     uint32_t loaderflags;
     uint32_t n_rva_sizes;
-    pe_data_directory_entry export_table_entry;
-    pe_data_directory_entry import_table_entry;
-    pe_data_directory_entry resource_table_entry;
-    pe_data_directory_entry exception_table_entry;
-    pe_data_directory_entry certificate_table_entry;
-    pe_data_directory_entry base_relocation_entry;
-    pe_data_directory_entry debug_entry;
-    pe_data_directory_entry architecture_entry;
-    pe_data_directory_entry global_ptr_entry;
-    pe_data_directory_entry tls_table_entry;
-    pe_data_directory_entry load_config_table_entry;
-    pe_data_directory_entry bound_import_entry;
-    pe_data_directory_entry iat_entry;
-    pe_data_directory_entry delay_import_descriptor_entry;
-    pe_data_directory_entry clr_runtime_header_entry;
-    pe_data_directory_entry reserved_entry;
+    pe_data_directory_entry data_directories[TOTAL_DATA_DIRECTORIES];
+};
+
+struct section_header {
+    char name[8];
+    uint32_t virtual_size;
+    uint32_t virtual_address;
+    uint32_t size_of_raw_data;
+    uint32_t pointer_raw_data;
+    uint32_t pointer_relocations;
+    uint32_t pointer_line_numbers;
+    uint16_t number_of_relocations;
+    uint16_t number_of_line_numbers;
+    uint32_t characteristics;
 };
