@@ -104,9 +104,9 @@ std::string pwn::Process::recv_raw(size_t len) {
         pwn::abort("Error reading");
     std::string s(buf, dwRead);
 #else
-    free(buf);
     exit(0);
 #endif
+    free(buf);
     return s;
 }
 
