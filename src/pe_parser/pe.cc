@@ -54,15 +54,18 @@ PE::PE(const std::string &filename) {
         std::cout << "Unknown format " << std::endl;
         return;
     }
-    /* Parse Section Headers */
+#ifndef TOTAL_SECTION_HEADERS
+#define TOTAL_SECTION_HEADERS this->coff_header.n_sections
+#endif
+    section_header tmp;
+    std::memset(&tmp, 0, sizeof(section_headers));
+    /* Parse N Section Headers */
     for (int i = 0; i < TOTAL_SECTION_HEADERS; i++) {
-        this->file.read((char *)&this->section_headers[i],
-                        sizeof(section_header));
+        this->file.read((char *)&tmp, sizeof(section_header));
+        this->section_headers.push_back(tmp);
     }
-
-    std::cout << "0x" << std::hex
-              << this->get_file_offset_of_data_directory(debug_entry)
-              << std::endl;
+    this->print_sections();
+    this->parse_export_directory_table();
 }
 
 void PE::print_section_info(const std::string &section_name) {
@@ -75,34 +78,38 @@ void PE::print_section_info(const std::string &section_name) {
 }
 
 void PE::print_section_info_by_index(int32_t idx) {
-    std::cout << "Section Name: " << section_headers[idx].name << std::endl;
+    std::cout << "Section Name: " << this->section_headers.at(idx).name
+              << std::endl;
     std::cout << "Virtual Size: 0x" << std::hex
-              << section_headers[idx].virtual_size << std::endl;
+              << this->section_headers.at(idx).virtual_size << std::endl;
     std::cout << "Virtual Address: 0x" << std::hex
-              << section_headers[idx].virtual_address << std::endl;
+              << this->section_headers.at(idx).virtual_address << std::endl;
     std::cout << "Size of Raw Data: 0x" << std::hex
-              << section_headers[idx].size_of_raw_data << std::endl;
+              << this->section_headers.at(idx).size_of_raw_data << std::endl;
     std::cout << "Pointer to Raw Data: 0x" << std::hex
-              << section_headers[idx].pointer_raw_data << std::endl;
+              << this->section_headers.at(idx).pointer_raw_data << std::endl;
     std::cout << "Pointer to line numbers: 0x" << std::hex
-              << section_headers[idx].pointer_line_numbers << std::endl;
+              << this->section_headers.at(idx).pointer_line_numbers
+              << std::endl;
     std::cout << "Number of Relocations: 0x" << std::hex
-              << section_headers[idx].number_of_relocations << std::endl;
+              << this->section_headers.at(idx).number_of_relocations
+              << std::endl;
     std::cout << "Number of Line numbers: 0x" << std::hex
-              << section_headers[idx].number_of_line_numbers << std::endl;
+              << this->section_headers.at(idx).number_of_line_numbers
+              << std::endl;
     std::cout << "Characteristics of Section: 0x" << std::hex
-              << section_headers[idx].characteristics << std::endl;
+              << this->section_headers.at(idx).characteristics << std::endl;
 }
 
 int32_t PE::get_section_header_by_name(const std::string &section_name) {
     for (int i = 0; i < TOTAL_SECTION_HEADERS; i++)
-        if (!strcmp(section_name.c_str(), this->section_headers[i].name)) {
+        if (!strcmp(section_name.c_str(), this->section_headers.at(i).name)) {
             return i;
         }
     return -1;
 }
 
-int64_t PE::get_file_offset_of_data_directory(DATA_DIRECTORY dir) {
+uint32_t PE::get_file_offset_of_data_directory(DATA_DIRECTORY dir) {
     if (dir >= TOTAL_DATA_DIRECTORIES) {
         return -1;
     }
@@ -116,19 +123,91 @@ int64_t PE::get_file_offset_of_data_directory(DATA_DIRECTORY dir) {
     } else {
         return -1;
     }
-    int i = 0;
-    for (i; i < TOTAL_SECTION_HEADERS; i++) {
-        if (this->section_headers[i].virtual_address <=
-                directory_virtual_addr &&
-            this->section_headers[i].virtual_address +
-                    this->section_headers[i].size_of_raw_data >
-                directory_virtual_addr)
-            break;
+    return this->get_file_offset_from_rva(directory_virtual_addr);
+}
+
+void PE::print_sections() {
+    int j = 0;
+    for (auto i : this->section_headers) {
+        std::cout << i.name << std::endl;
+        this->print_section_info_by_index(j++);
     }
-    if (i >= TOTAL_DATA_DIRECTORIES) {
+}
+
+uint64_t PE::get_virtual_address_data_directory(DATA_DIRECTORY dir) {
+    if (dir >= TOTAL_DATA_DIRECTORIES) {
         return -1;
     }
+    if (this->pe_magicnum == PE_32BIT) {
+        return this->optional_header_32bit.image_base +
+               this->optional_header_32bit.data_directories[dir]
+                   .virtual_address;
+    } else if (this->pe_magicnum == PE_64BIT) {
+        return this->optional_header_64bit.image_base +
+               this->optional_header_64bit.data_directories[dir]
+                   .virtual_address;
+    } else {
+        return -1;
+    }
+}
 
-    return (this->section_headers[i].pointer_raw_data) +
-           (directory_virtual_addr - this->section_headers[i].virtual_address);
+void PE::parse_export_directory_table() {
+
+    uint32_t export_dtable_file_offset = 0;
+    if (this->get_virtual_address_data_directory(export_table_entry) == -1) {
+        exit(1);
+    } else {
+        /* Seek to export directory table file offset */
+        export_dtable_file_offset =
+            this->get_file_offset_of_data_directory(export_table_entry);
+        this->file.seekg(export_dtable_file_offset);
+        this->file.read((char *)&this->__export_directory_table,
+                        sizeof(export_directory_table));
+
+        /* Parse address table entries */
+        uint32_t tmp_address = 0;
+        uint32_t address_table_file_offset = this->get_file_offset_from_rva(
+            this->__export_directory_table.export_address_table_rva);
+        if (address_table_file_offset == -1) {
+            std::cout << "Error parsing export directory table" << std::endl;
+            exit(1);
+        }
+        this->file.seekg(address_table_file_offset);
+        for (uint32_t i = 0;
+             i < this->__export_directory_table.address_table_entries; i++) {
+            this->file.read((char *)&tmp_address, sizeof(uint32_t));
+            this->export_address_table.push_back(tmp_address);
+        }
+
+        /* Parse name pointer addresses */
+        uint32_t name_table_pointer = this->get_file_offset_from_rva(
+            this->__export_directory_table.name_pointer_rva);
+        if (name_table_pointer == -1) {
+            std::cout << "Error parsing name table " << std::endl;
+            exit(1);
+        }
+        this->file.seekg(name_table_pointer);
+        for (uint32_t i = 0;
+             i < this->__export_directory_table.number_of_name_pointers; i++) {
+            this->file.read((char *)&tmp_address, sizeof(uint32_t));
+            this->export_name_address_table.push_back(tmp_address);
+        }
+
+        /* No need to parse the Ordinal table since we know it starts from 0 */
+        for (uint32_t i = 0;
+             i < this->__export_directory_table.address_table_entries; i++) {
+            this->export_ordinal_table.push_back(i);
+        }
+    }
+}
+
+/* Get file raw offset from virtual address */
+uint32_t PE::get_file_offset_from_rva(uint32_t rva) {
+    for (auto i : this->section_headers) {
+        if (i.virtual_address <= rva &&
+            i.virtual_address + i.size_of_raw_data > rva) {
+            return i.pointer_raw_data + (rva - i.virtual_address);
+        }
+    }
+    return -1;
 }

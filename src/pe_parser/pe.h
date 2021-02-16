@@ -1,6 +1,6 @@
 #ifndef PE_h
 #define PE_H
-#include "pe_definitions.h"
+#include "pefile_definitions.h"
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -11,6 +11,7 @@ class PE {
   public:
     PE(const std::string &);
     void print_section_info(const std::string &);
+    void print_sections();
 
   private:
     std::ifstream file;
@@ -22,11 +23,18 @@ class PE {
     uint32_t coffheader_offset;
     uint32_t pe_magicnum;
     uint16_t image_type;
-    section_header section_headers[8];
+    std::vector<section_header> section_headers;
+    std::vector<uint32_t> export_address_table;
+    std::vector<uint16_t> export_ordinal_table;
+    std::vector<uint32_t> export_name_address_table;
+    export_directory_table __export_directory_table;
 
     // return section header index by name
     int32_t get_section_header_by_name(const std::string &);
     void print_section_info_by_index(int32_t);
-    int64_t get_file_offset_of_data_directory(DATA_DIRECTORY);
+    uint32_t get_file_offset_of_data_directory(DATA_DIRECTORY);
+    uint64_t get_virtual_address_data_directory(DATA_DIRECTORY);
+    void parse_export_directory_table();
+    uint32_t get_file_offset_from_rva(uint32_t);
 };
 #endif

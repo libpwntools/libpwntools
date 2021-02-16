@@ -1,4 +1,3 @@
-#define TOTAL_SECTION_HEADERS 8
 #define TOTAL_DATA_DIRECTORIES 0x10
 
 enum SIGNATURE {
@@ -27,6 +26,36 @@ enum DATA_DIRECTORY {
     delay_import_descriptor_entry,
     clr_runtime_header_entry,
     reserved_entry,
+};
+
+enum PE_SECTION_FLAG_CHARACTERISTICS {
+
+    IMAGE_SCN_RESERVED_0001 = 0x1,
+    IMAGE_SCN_RESERVED_0002 = 0x2,
+    IMAGE_SCN_RESERVED_0004 = 0x4,
+    IMAGE_SCN_TYPE_NO_PAD = 0x8,
+    IMAGE_SCN_RESERVED_0010 = 0x10,
+    IMAGE_SCN_CNT_CODE = 0x20,
+    IMAGE_SCN_CNT_INITIALIZED_DATA = 0x40,
+    IMAGE_SCN_CNT_UNINITIALIZED_DATA = 0x80,
+    IMAGE_SCN_LNK_OTHER = 0x100,
+    IMAGE_SCN_LNK_INFO = 0x200,
+    IMAGE_SCN_RESERVED_0400 = 0x400,
+    IMAGE_SCN_LNK_REMOVE = 0x800,
+    IMAGE_SCN_LNK_COMDAT = 0x1000,
+    IMAGE_SCN_GPREL = 0x8000,
+    IMAGE_SCN_MEM_PURGEABLE = 0x10000,
+    IMAGE_SCN_MEM_16BIT = 0x20000,
+    IMAGE_SCN_MEM_LOCKED = 0x40000,
+    IMAGE_SCN_MEM_PRELOAD = 0x80000,
+    IMAGE_SCN_LNK_NRELOC_OVFL = 0x1000000,
+    IMAGE_SCN_MEM_DISCARDABLE = 0x2000000,
+    IMAGE_SCN_MEM_NOT_CACHED = 0x4000000,
+    IMAGE_SCN_MEM_NOT_PAGED = 0x8000000,
+    IMAGE_SCN_MEM_SHARED = 0x10000000,
+    IMAGE_SCN_MEM_EXECUTE = 0x20000000,
+    IMAGE_SCN_MEM_READ = 0x40000000,
+    IMAGE_SCN_MEM_WRITE = 0x80000000
 };
 
 enum MACHINE {
@@ -177,4 +206,18 @@ struct section_header {
     uint16_t number_of_relocations;
     uint16_t number_of_line_numbers;
     uint32_t characteristics;
+};
+
+struct export_directory_table {
+    uint32_t export_flags;
+    uint32_t time_date_stamp;
+    uint16_t major_version;
+    uint16_t minor_version;
+    uint32_t name_rva;
+    uint32_t ordinal_base;
+    uint32_t address_table_entries;
+    uint32_t number_of_name_pointers;
+    uint32_t export_address_table_rva;
+    uint32_t name_pointer_rva;
+    uint32_t ordinal_table_rva;
 };
