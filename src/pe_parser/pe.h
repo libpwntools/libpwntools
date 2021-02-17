@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -12,6 +13,7 @@ class PE {
     PE(const std::string &);
     void print_section_info(const std::string &);
     void print_sections();
+    uint64_t &operator[](const std::string &);
 
   private:
     std::ifstream file;
@@ -25,8 +27,9 @@ class PE {
     uint16_t image_type;
     std::vector<section_header> section_headers;
     std::vector<uint32_t> export_address_table;
-    std::vector<uint16_t> export_ordinal_table;
+    std::vector<uint32_t> export_ordinal_table;
     std::vector<uint32_t> export_name_address_table;
+    std::unordered_map<std::string, uint64_t> export_symbol_map;
     export_directory_table __export_directory_table;
 
     // return section header index by name

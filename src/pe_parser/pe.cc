@@ -64,7 +64,6 @@ PE::PE(const std::string &filename) {
         this->file.read((char *)&tmp, sizeof(section_header));
         this->section_headers.push_back(tmp);
     }
-    this->print_sections();
     this->parse_export_directory_table();
 }
 
@@ -154,7 +153,8 @@ uint64_t PE::get_virtual_address_data_directory(DATA_DIRECTORY dir) {
 void PE::parse_export_directory_table() {
 
     uint32_t export_dtable_file_offset = 0;
-    if (this->get_virtual_address_data_directory(export_table_entry) == -1) {
+    if (this->get_virtual_address_data_directory(export_table_entry) <= 0) {
+        std::cout << "Error parsing Export directory table " << std::endl;
         exit(1);
     } else {
         /* Seek to export directory table file offset */
@@ -165,18 +165,22 @@ void PE::parse_export_directory_table() {
                         sizeof(export_directory_table));
 
         /* Parse address table entries */
-        uint32_t tmp_address = 0;
+        uint32_t tmp = 0;
+        uint32_t i;
         uint32_t address_table_file_offset = this->get_file_offset_from_rva(
             this->__export_directory_table.export_address_table_rva);
         if (address_table_file_offset == -1) {
             std::cout << "Error parsing export directory table" << std::endl;
             exit(1);
         }
+#ifndef N_EXPORT_TABLE_SYMBOLS
+#define N_EXPORT_TABLE_SYMBOLS                                                 \
+    this->__export_directory_table.address_table_entries
+#endif
         this->file.seekg(address_table_file_offset);
-        for (uint32_t i = 0;
-             i < this->__export_directory_table.address_table_entries; i++) {
-            this->file.read((char *)&tmp_address, sizeof(uint32_t));
-            this->export_address_table.push_back(tmp_address);
+        for (i = 0; i < N_EXPORT_TABLE_SYMBOLS; i++) {
+            this->file.read((char *)&tmp, sizeof(uint32_t));
+            this->export_address_table.push_back(tmp);
         }
 
         /* Parse name pointer addresses */
@@ -187,16 +191,37 @@ void PE::parse_export_directory_table() {
             exit(1);
         }
         this->file.seekg(name_table_pointer);
-        for (uint32_t i = 0;
-             i < this->__export_directory_table.number_of_name_pointers; i++) {
-            this->file.read((char *)&tmp_address, sizeof(uint32_t));
-            this->export_name_address_table.push_back(tmp_address);
+        for (i = 0; i < N_EXPORT_TABLE_SYMBOLS; i++) {
+            this->file.read((char *)&tmp, sizeof(uint32_t));
+            this->export_name_address_table.push_back(tmp);
         }
 
-        /* No need to parse the Ordinal table since we know it starts from 0 */
-        for (uint32_t i = 0;
-             i < this->__export_directory_table.address_table_entries; i++) {
-            this->export_ordinal_table.push_back(i);
+        /* Parse the Ordinal table */
+        uint32_t ordinal_table_raw_offset = this->get_file_offset_from_rva(
+            this->__export_directory_table.ordinal_table_rva);
+        if (ordinal_table_raw_offset == -1) {
+            std::cout << "Error Parsing name table " << std::endl;
+            exit(1);
+        }
+        tmp = 0;
+        this->file.seekg(ordinal_table_raw_offset);
+        for (i = 0; i < N_EXPORT_TABLE_SYMBOLS; i++) {
+            this->file.read((char *)&tmp, sizeof(uint16_t));
+            this->export_ordinal_table.push_back(tmp);
+        }
+
+        /* Parse symbol names */
+        uint32_t symbol_string_raw_offset = 0;
+        uint32_t symbol_virtual_addr = 0;
+        std::string symbol_name;
+        i = 0;
+        for (auto j : this->export_ordinal_table) {
+            symbol_virtual_addr = this->export_address_table.at(j);
+            symbol_string_raw_offset = this->get_file_offset_from_rva(
+                this->export_name_address_table.at(i++));
+            this->file.seekg(symbol_string_raw_offset);
+            std::getline(this->file, symbol_name, '\x00');
+            this->export_symbol_map[symbol_name.c_str()] = symbol_virtual_addr;
         }
     }
 }
@@ -210,4 +235,13 @@ uint32_t PE::get_file_offset_from_rva(uint32_t rva) {
         }
     }
     return -1;
+}
+
+uint64_t &PE::operator[](const std::string &symbol_name) {
+    if (this->export_symbol_map.find(symbol_name) ==
+        this->export_symbol_map.end()) {
+        std::cout << "Symbol Not found " << std::endl;
+        exit(1);
+    }
+    return this->export_symbol_map[symbol_name];
 }
