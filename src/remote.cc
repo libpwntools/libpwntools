@@ -21,6 +21,8 @@ pwn::Remote::Remote() {
 }
 
 pwn::Remote::~Remote() {
+    if (this->status == running)
+        return;
     this->close();
 }
 
@@ -50,6 +52,7 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
         pwn::abort("Connection failed");
 
     this->debug = false;
+    this->status = running;
 }
 
 std::string pwn::Remote::recv_raw(size_t len) {
@@ -106,4 +109,5 @@ void pwn::Remote::close() {
 #elif _WIN32
     closesocket(this->fd);
 #endif
+    this->status = closed;
 }

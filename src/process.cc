@@ -24,6 +24,8 @@ pwn::Process::Process() {
 }
 
 pwn::Process::~Process() {
+    if (this->status == running)
+        return;
     this->close();
 }
 
@@ -76,6 +78,7 @@ pwn::Process::Process(const std::string &path) {
     createProcess((const char *)path.c_str());
 #endif
     this->debug = false;
+    this->status = running;
 }
 
 void pwn::Process::debugger_attach() {
@@ -135,6 +138,7 @@ void pwn::Process::close() {
 #elif _WIN32
     exit(1);
 #endif
+    this->status = closed;
 }
 
 #ifdef _WIN32

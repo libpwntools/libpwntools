@@ -23,6 +23,8 @@ namespace pwn {
 
       protected:
         bool debug;
+        enum status_t { running, closed };
+        status_t status;
 
       private:
         std::string buffer;

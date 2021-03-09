@@ -16,7 +16,6 @@
 
 pwn::IO::IO(){};
 pwn::IO::~IO() {
-    std::cout << this->buffer;
     this->buffer.clear();
 };
 
