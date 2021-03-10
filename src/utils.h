@@ -14,7 +14,7 @@ namespace pwn {
     std::string string_to_hex(const std::string &);
     int hex_value(unsigned char);
     std::string hex_to_string(const std::string &);
-    std::string remove_newline(std::string &);
+    std::string remove_newline(const std::string &);
     std::string Hex(uint64_t);
     uint64_t Int(const std::string &, uint8_t);
     std::string random_string(size_t);

@@ -146,11 +146,13 @@ std::string pwn::hex_to_string(const std::string &input) {
     return output;
 }
 
-std::string pwn::remove_newline(std::string &s) {
-    int pos;
-    if ((pos = s.find('\n')) != std::string::npos)
-        s.erase(pos);
-    return s;
+std::string pwn::remove_newline(const std::string &s) {
+    std::string res = s;
+    size_t len;
+    while (len = res.length())
+        if (res[len - 1] == '\n')
+            res.resize(len - 1);
+    return res;
 }
 
 std::string pwn::Hex(uint64_t n) {
