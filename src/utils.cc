@@ -113,35 +113,22 @@ std::string pwn::string_to_hex(const std::string &input) {
 
     std::string output;
     output.reserve(input.length() * 2);
-    for (unsigned char c : input) {
+    for (uint8_t c : input) {
         output.push_back(hex_digits[c >> 4]);
         output.push_back(hex_digits[c & 15]);
     }
     return output;
 }
 
-int pwn::hex_value(unsigned char hex_digit) {
-    static const signed char hex_values[256] = {
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0,  1,  2,  3,  4,  5,
-        6,  7,  8,  9,  -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1,
-    };
-    int value = hex_values[hex_digit];
-    if (value == -1)
-        throw std::invalid_argument("invalid hex digit");
-    return value;
+int pwn::hex_value(uint8_t hex_digit) {
+    if (hex_digit >= '0' && hex_digit <= '9')
+        return hex_digit - '0';
+    if (hex_digit >= 'a' && hex_digit <= 'f')
+        return hex_digit - 'a' + 10;
+    if (hex_digit >= 'A' && hex_digit <= 'F')
+        return hex_digit - 'A' + 10;
+    pwn::abort("Invalid hex digit");
+    return -1;
 }
 
 std::string pwn::hex_to_string(const std::string &input) {
