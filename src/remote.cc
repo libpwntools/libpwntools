@@ -35,8 +35,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <cassert>
-#include <thread>
 #include <stdexcept>
+#include <thread>
 
 int send_wrapper(sock f, const char *buf, size_t len, int z) {
     return send(f, buf, len, z);
@@ -67,7 +67,8 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     int res = 0;
     res = WSAStartup(MAKEWORD(2, 2), &this->wsaData);
     if (res != 0)
-        throw std::runtime_error("WSAStartup failed with error: " + std::to_string(res));
+        throw std::runtime_error("WSAStartup failed with error: " +
+                                 std::to_string(res));
 #endif
     hostent *record = gethostbyname(ip.c_str());
     if (record == nullptr)
