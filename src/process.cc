@@ -45,7 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #include <signal.h>
-
+#include <stdexcept>
 #include <thread>
 
 pwn::Process::Process() {
@@ -91,17 +91,17 @@ pwn::Process::Process(const std::string &path) {
 
     if (!CreatePipe(&this->g_hChildStd_OUT_Rd, &this->g_hChildStd_OUT_Wr,
                     &this->saAttr, 0))
-        pwn::abort("Error Creating Pipe");
+        throw std::runtime_error("Error Creating Pipe");
 
     if (!SetHandleInformation(this->g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
-        pwn::abort("Error SetHandle");
+        throw std::runtime_error("Error SetHandle");
 
     if (!CreatePipe(&this->g_hChildStd_IN_Rd, &this->g_hChildStd_IN_Wr, &saAttr,
                     0))
-        pwn::abort("Error Createing Pipe");
+        throw std::runtime_error("Error Createing Pipe");
 
     if (!SetHandleInformation(this->g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
-        pwn::abort("Error SetHandle");
+        throw std::runtime_error("Error SetHandle");
 
     createProcess((const char *)path.c_str());
 #endif
@@ -132,7 +132,7 @@ std::string pwn::Process::recv_raw(size_t len) {
     BOOL bSuccess = FALSE;
     bSuccess = ReadFile(this->g_hChildStd_OUT_Rd, buf, len, &dwRead, nullptr);
     if (!bSuccess)
-        pwn::abort("Error reading");
+        throw std::runtime_error("Error reading");
     std::string s(buf, dwRead);
 #else
     exit(0);
@@ -187,7 +187,7 @@ void pwn::Process::createProcess(const char *progname) {
                              nullptr, nullptr, &siStartInfo, &piProcInfo);
 
     if (!bSuccess)
-        pwn::abort("Error creating process");
+        throw std::runtime_error("Error creating process");
     else {
         CloseHandle(piProcInfo.hProcess);
         CloseHandle(piProcInfo.hThread);

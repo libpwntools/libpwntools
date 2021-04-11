@@ -36,6 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #include <cassert>
 #include <thread>
+#include <stdexcept>
 
 int send_wrapper(sock f, const char *buf, size_t len, int z) {
     return send(f, buf, len, z);
@@ -66,18 +67,18 @@ pwn::Remote::Remote(const std::string &ip, uint32_t port_number) {
     int res = 0;
     res = WSAStartup(MAKEWORD(2, 2), &this->wsaData);
     if (res != 0)
-        pwn::abort("WSAStartup failed with error: " + std::to_string(res));
+        throw std::runtime_error("WSAStartup failed with error: " + std::to_string(res));
 #endif
     hostent *record = gethostbyname(ip.c_str());
     if (record == nullptr)
-        pwn::abort(ip + " is unavailable");
+        throw std::runtime_error(ip + " is unavailable");
     serv_addr.sin_addr = *(in_addr *)record->h_addr;
 
     if ((this->fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        pwn::abort("Error while creating socket");
+        throw std::runtime_error("Error while creating socket");
 
     if (connect(this->fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        pwn::abort("Connection failed");
+        throw std::runtime_error("Connection failed");
 
     this->debug = false;
     this->status = running;
@@ -125,10 +126,10 @@ void pwn::Remote::shutdown(const std::string &h) {
     else if (h == "recv")
         how = SHUT_RD;
     else
-        pwn::abort("Only send / recv allowed");
+        throw std::runtime_error("Only send / recv allowed");
 
     if (::shutdown(this->fd, how) < 0)
-        pwn::abort("Shutdown err");
+        throw std::runtime_error("Shutdown err");
 }
 #endif
 void pwn::Remote::close() {

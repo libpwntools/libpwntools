@@ -44,6 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sstream>
 #endif
 #include <random>
+#include <stdexcept>
 
 bool pwn::ends_with(const std::string &a, const std::string &b) {
     if (b.size() > a.size())
@@ -155,7 +156,7 @@ int pwn::hex_value(uint8_t hex_digit) {
         return hex_digit - 'a' + 10;
     if (hex_digit >= 'A' && hex_digit <= 'F')
         return hex_digit - 'A' + 10;
-    pwn::abort("Invalid hex digit");
+    throw std::invalid_argument("Invalid hex digit");
     return -1;
 }
 
@@ -192,12 +193,12 @@ std::string pwn::Hex(uint64_t n) {
 
 uint64_t pwn::Int(const std::string &n, uint8_t base) {
     if (base < 2 || base > 36)
-        pwn::abort("Invalid base");
+        throw std::invalid_argument("Invalid base");
 
     char *p;
     uint64_t val = strtoul(n.c_str(), &p, base);
     if (*p)
-        pwn::abort("Not a number");
+        throw std::invalid_argument("Not a number");
 
     return val;
 }
