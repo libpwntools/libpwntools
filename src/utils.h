@@ -47,5 +47,22 @@ namespace pwn {
     uint64_t Int(const std::string &, uint8_t);
     std::string random_string(size_t);
     void abort(const std::string &);
+
+    class check_bounds {
+      public:
+        check_bounds(uintptr_t _ptr, size_t _len) {
+            this->ptr = _ptr;
+            this->len = _len;
+        }
+        template <typename T> T check(const T &t) {
+            assert(((uintptr_t)t) < (this->ptr + this->len));
+            assert(((uintptr_t)t) >= this->ptr);
+            return t;
+        }
+
+      private:
+        uintptr_t ptr;
+        size_t len;
+    };
 } // namespace pwn
 #endif
